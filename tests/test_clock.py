@@ -4,13 +4,13 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from zone_timeline import clock
-from zone_timeline.clock import (dst_gap_change, dur, fmt_clock, fmt_delta, fmt_local, fmt_off, fmt_rel, is_open,
+from terrahour import clock
+from terrahour.clock import (dst_gap_change, dur, fmt_clock, fmt_delta, fmt_local, fmt_off, fmt_rel, is_open,
                                  local_zone, next_transition, overlap_window, parse_at, parse_goto, ref_offset,
                                  status_info, status_text, time_window, work_alpha)
-from zone_timeline.places import City
-from zone_timeline.state import State
-from zone_timeline.themes import C
+from terrahour.places import City
+from terrahour.state import State
+from terrahour.themes import C
 
 UTC = dt.timezone.utc
 LONDON = City("London", "Europe/London", 51.51, -0.13, 0)

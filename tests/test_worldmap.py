@@ -1,8 +1,8 @@
 import pytest
 
-from zone_timeline.places import City
-from zone_timeline.state import State
-from zone_timeline.worldmap import (LAT_SPAN, LAT_TOP, MASK_H, MASK_W, ZOOMS, integral, land_cells, load_mask,
+from terrahour.places import City
+from terrahour.state import State
+from terrahour.worldmap import (LAT_SPAN, LAT_TOP, MASK_H, MASK_W, ZOOMS, integral, land_cells, load_mask,
                                     map_view, zoom_map)
 
 

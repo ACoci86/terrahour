@@ -1,4 +1,4 @@
-"""Application state and the on-disk config file (~/.config/zone-timeline/config.json)."""
+"""Application state and the on-disk config file (~/.config/terrahour/config.json)."""
 import json
 import os
 import time
@@ -14,7 +14,7 @@ WORK_PRESETS = [(9, 17), (8, 18), (10, 19), (7, 15)]
 
 def config_path():
     base = os.environ.get("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config")
-    return os.path.join(base, "zone-timeline", "config.json")
+    return os.path.join(base, "terrahour", "config.json")
 
 
 def load_config():

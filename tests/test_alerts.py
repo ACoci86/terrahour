@@ -1,8 +1,8 @@
 import datetime as dt
 import time
 
-from zone_timeline.alerts import alert_city, check_alerts, parse_alert, resolve_place
-from zone_timeline.overlays import alert_desc
+from terrahour.alerts import alert_city, check_alerts, parse_alert, resolve_place
+from terrahour.overlays import alert_desc
 
 
 def test_resolve_place_prefers_your_cities_then_exchanges_then_the_database(state):

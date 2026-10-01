@@ -1,7 +1,7 @@
 """Online city lookup through the Open-Meteo geocoding API.
 
 Only used while typing in the "add city" box, and only when the built-in list has no answer.
-Runs in a background thread.  Set ``ZONE_TIMELINE_OFFLINE=1`` to disable all network access.
+Runs in a background thread.  Set ``TERRAHOUR_OFFLINE=1`` to disable all network access.
 """
 import json
 import os
@@ -13,7 +13,7 @@ import urllib.request
 
 def offline():
     """True when the user asked for no network access at all."""
-    return os.environ.get("ZONE_TIMELINE_OFFLINE", "") not in ("", "0")
+    return os.environ.get("TERRAHOUR_OFFLINE", "") not in ("", "0")
 
 
 def _ascii(s):
@@ -35,7 +35,7 @@ def _geo_fetch(q):
     try:
         url = ("https://geocoding-api.open-meteo.com/v1/search?name=%s&count=10&language=en&format=json"
                % urllib.parse.quote(q))
-        req = urllib.request.Request(url, headers={"User-Agent": "zone-timeline"})
+        req = urllib.request.Request(url, headers={"User-Agent": "terrahour"})
         with urllib.request.urlopen(req, timeout=6) as r:
             data = json.load(r)
         res = []

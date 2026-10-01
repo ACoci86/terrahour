@@ -26,7 +26,7 @@ def _fetch_weather_batch(keys):
             url = ("https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s"
                    "&current=temperature_2m,weather_code&timezone=auto"
                    % (",".join(str(k[0]) for k in chunk), ",".join(str(k[1]) for k in chunk)))
-            req = urllib.request.Request(url, headers={"User-Agent": "zone-timeline"})
+            req = urllib.request.Request(url, headers={"User-Agent": "terrahour"})
             with urllib.request.urlopen(req, timeout=8) as r:
                 data = json.load(r)
             items = data if isinstance(data, list) else [data]

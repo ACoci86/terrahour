@@ -36,14 +36,14 @@ def draw_ticks(cv, y, xb, nb, start, span, step24=2):
 def draw_topbar(cv, W, st, now, live_now):
     cv.fill(0, 0, W, C.TOP_BG)
     cv.put(1, 0, " ◉ ", C.ACC2, C.TOP_BG, True)
-    cv.put(4, 0, "zone", C.WHITE, C.TOP_BG, True)
-    name = "-timeline"
+    cv.put(4, 0, "terra", C.WHITE, C.TOP_BG, True)
+    name = "hour"
     for i, c in enumerate(name):
-        cv.put(8 + i, 0, c, mix(C.ACC1, C.ACC2, i / (len(name) - 1)), C.TOP_BG, True)
+        cv.put(9 + i, 0, c, mix(C.ACC1, C.ACC2, i / (len(name) - 1)), C.TOP_BG, True)
     bits = ["markets" if st.markets else "work %02d–%02d" % st.work, "12h" if st.h12 else "24h", C.name]
     if st.weather != "off":
         bits.append("°" + st.weather.upper())
-    cv.put(19, 0, "  ·  ".join(bits), C.DIM, C.TOP_BG)
+    cv.put(16, 0, "  ·  ".join(bits), C.DIM, C.TOP_BG)
     if st.frozen:
         chip = "⏸ %s" % fmt_delta((now - live_now).total_seconds())
         chip_col = C.AMBER

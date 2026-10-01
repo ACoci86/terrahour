@@ -47,11 +47,11 @@ def compose_compact(W, H, st, now, live_now):
     if tx > 1:
         cv.put(tx, 0, clock, C.CYAN, C.TOP_BG, True)
     if tx > 18:
-        cv.put(1, 0, "zone", C.WHITE, C.TOP_BG, True)
-        for i, c in enumerate("-timeline"):
-            cv.put(5 + i, 0, c, mix(C.ACC1, C.ACC2, i / 8), C.TOP_BG, True)
+        cv.put(1, 0, "terra", C.WHITE, C.TOP_BG, True)
+        for i, c in enumerate("hour"):
+            cv.put(6 + i, 0, c, mix(C.ACC1, C.ACC2, i / 3), C.TOP_BG, True)
         if st.markets and tx > 30:
-            cv.put(15, 0, "markets", C.DIM, C.TOP_BG)
+            cv.put(12, 0, "markets", C.DIM, C.TOP_BG)
     # --- vertical budget
     foot_y = H - 1 if H >= 10 else None
     det_y = (H - 2 if foot_y is not None else H - 1) if H >= 6 else None

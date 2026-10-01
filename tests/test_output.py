@@ -1,6 +1,6 @@
 import json
 
-from zone_timeline.output import fit_line, json_output, line_output, render_parts, short_label
+from terrahour.output import fit_line, json_output, line_output, render_parts, short_label
 
 
 def test_short_label():

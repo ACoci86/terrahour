@@ -1,11 +1,11 @@
 """Drive the app through handle_key / handle_mouse exactly as the terminal loop would."""
 import datetime as dt
 
-from zone_timeline.ambient import amb_entries
-from zone_timeline.compose import compose
-from zone_timeline.keys import handle_key, handle_mouse
-from zone_timeline.themes import C
-from zone_timeline.worldmap import ZOOMS
+from terrahour.ambient import amb_entries
+from terrahour.compose import compose
+from terrahour.keys import handle_key, handle_mouse
+from terrahour.themes import C
+from terrahour.worldmap import ZOOMS
 
 RIGHT, LEFT, UP, DOWN = "\x1b[C", "\x1b[D", "\x1b[A", "\x1b[B"
 SHIFT_RIGHT, SHIFT_UP = "\x1b[1;2C", "\x1b[1;2A"

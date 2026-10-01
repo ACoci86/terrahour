@@ -28,6 +28,6 @@ jobs:
         run: pytest
       - name: Smoke test the CLI
         run: |
-          zone-timeline --version
-          zone-timeline --json --at 2026-03-18T14:30:00Z | head -5
-          zone-timeline --once --size 100x30 --at 2026-03-18T14:30:00Z > /dev/null
+          terrahour --version
+          terrahour --json --at 2026-03-18T14:30:00Z | head -5
+          terrahour --once --size 100x30 --at 2026-03-18T14:30:00Z > /dev/null

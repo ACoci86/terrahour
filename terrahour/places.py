@@ -274,7 +274,7 @@ def cities_from_args(specs):
         except (ZoneInfoNotFoundError, ValueError):
             found = search_db(zone, 1)          # a city name such as "Naples"
             if not found:
-                sys.exit("zone-timeline: unknown place or time zone %r (try e.g. Naples or Europe/Berlin)" % zone)
+                sys.exit("terrahour: unknown place or time zone %r (try e.g. Naples or Europe/Berlin)" % zone)
             ent = dict(found[0])
             if label.strip():
                 ent["name"] = label.strip()

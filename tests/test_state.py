@@ -1,13 +1,13 @@
 import json
 import os
 
-from zone_timeline.places import City
-from zone_timeline.state import config_path, load_config, state_from_config
-from zone_timeline.themes import C, apply_theme
+from terrahour.places import City
+from terrahour.state import config_path, load_config, state_from_config
+from terrahour.themes import C, apply_theme
 
 
 def test_config_path_honours_xdg(tmp_path):
-    assert config_path() == os.path.join(str(tmp_path / "config"), "zone-timeline", "config.json")
+    assert config_path() == os.path.join(str(tmp_path / "config"), "terrahour", "config.json")
 
 
 def test_fresh_state_has_defaults():

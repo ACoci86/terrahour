@@ -22,7 +22,7 @@ SOFTWARE.
 
 ----------------------------------------------------------------------
 
-The bundled data files under zone_timeline/data/ have their own licences:
+The bundled data files under terrahour/data/ have their own licences:
 
 * cities.txt.gz is derived from GeoNames (https://www.geonames.org/),
   licensed under Creative Commons Attribution 4.0 (CC BY 4.0).

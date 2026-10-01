@@ -8,7 +8,7 @@ so the images are reproducible and do not depend on anyone's terminal setup.
     python tools/screenshots.py            # writes docs/*.png and docs/demo.gif
 
 Fonts: DejaVu Sans Mono for text, DejaVu Sans for braille (the mono face has none) and Symbola
-for the one or two symbols neither has. Override with ZT_FONT_DIR if yours live elsewhere.
+for the one or two symbols neither has. Override with TERRAHOUR_FONT_DIR if yours live elsewhere.
 """
 import datetime as dt
 import os
@@ -20,19 +20,19 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-os.environ["ZONE_TIMELINE_OFFLINE"] = "1"       # never hit the network while rendering
+os.environ["TERRAHOUR_OFFLINE"] = "1"       # never hit the network while rendering
 os.environ["TZ"] = "UTC"
 time.tzset()
 
-from zone_timeline.compose import compose            # noqa: E402
-from zone_timeline.keys import handle_key            # noqa: E402
-from zone_timeline.places import default_cities      # noqa: E402
-from zone_timeline.state import State                # noqa: E402
-from zone_timeline.themes import C, apply_theme      # noqa: E402
+from terrahour.compose import compose            # noqa: E402
+from terrahour.keys import handle_key            # noqa: E402
+from terrahour.places import default_cities      # noqa: E402
+from terrahour.state import State                # noqa: E402
+from terrahour.themes import C, apply_theme      # noqa: E402
 
 DOCS = ROOT / "docs"
 NOW = dt.datetime(2026, 3, 18, 14, 30, tzinfo=dt.timezone.utc)
-FONT_DIR = Path(os.environ.get("ZT_FONT_DIR", "/usr/share/fonts/truetype"))
+FONT_DIR = Path(os.environ.get("TERRAHOUR_FONT_DIR", "/usr/share/fonts/truetype"))
 FONTS = {
     "regular": FONT_DIR / "dejavu/DejaVuSansMono.ttf",
     "bold": FONT_DIR / "dejavu/DejaVuSansMono-Bold.ttf",
@@ -46,7 +46,7 @@ class Painter:
     def __init__(self, size=SIZE):
         self.f = {k: ImageFont.truetype(str(p), size) for k, p in FONTS.items() if p.exists()}
         if "regular" not in self.f:
-            sys.exit("DejaVu Sans Mono not found; set ZT_FONT_DIR")
+            sys.exit("DejaVu Sans Mono not found; set TERRAHOUR_FONT_DIR")
         self.cw = round(self.f["regular"].getlength("M"))
         self.ch = round(size * 1.25)
 
@@ -117,7 +117,7 @@ def still_images(painter):
     png("ambient.png", st, 100, 30, painter)
     png("radar.png", fresh_state(mode="radar", sel=2), 120, 38, painter)
     st = fresh_state(mode="add", buf="naples")
-    from zone_timeline.places import refresh_results
+    from terrahour.places import refresh_results
     refresh_results(st)
     png("add-city.png", st, 120, 38, painter)
     for theme in ("light", "nord"):

@@ -12,15 +12,15 @@ ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def run(*args, env=None):
-    e = dict(os.environ, PYTHONPATH=str(ROOT), ZONE_TIMELINE_OFFLINE="1", TZ="UTC")
+    e = dict(os.environ, PYTHONPATH=str(ROOT), TERRAHOUR_OFFLINE="1", TZ="UTC")
     e.update(env or {})
-    return subprocess.run([sys.executable, "-m", "zone_timeline", *args], capture_output=True, text=True,
+    return subprocess.run([sys.executable, "-m", "terrahour", *args], capture_output=True, text=True,
                           env=e, cwd=ROOT, timeout=60)
 
 
 def test_version():
     r = run("--version")
-    assert r.returncode == 0 and r.stdout.startswith("zone-timeline ")
+    assert r.returncode == 0 and r.stdout.startswith("terrahour ")
 
 
 def test_help_mentions_the_main_modes():
@@ -58,7 +58,7 @@ def test_session_zones_and_labels_do_not_touch_the_config(tmp_path):
     r = run("--once", "--size", "120x30", "--at", AT, "Europe/Berlin", "Home=America/Chicago", env=env)
     text = ANSI.sub("", r.stdout)
     assert "Berlin" in text and "Home" in text and "Tokyo" not in text
-    assert not (tmp_path / "zone-timeline").exists()
+    assert not (tmp_path / "terrahour").exists()
 
 
 def test_unknown_place_is_an_error(tmp_path):
@@ -70,7 +70,7 @@ def test_reset(tmp_path):
     env = {"XDG_CONFIG_HOME": str(tmp_path)}
     r = run("--reset", env=env)
     assert r.returncode == 0 and "nothing to reset" in r.stdout
-    cfg = tmp_path / "zone-timeline" / "config.json"
+    cfg = tmp_path / "terrahour" / "config.json"
     cfg.parent.mkdir(parents=True)
     cfg.write_text("{}")
     r = run("--reset", env=env)

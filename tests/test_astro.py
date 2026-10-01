@@ -3,8 +3,8 @@ import math
 
 import pytest
 
-from zone_timeline.astro import daylight, sun_pos, sun_times
-from zone_timeline.places import City
+from terrahour.astro import daylight, sun_pos, sun_times
+from terrahour.places import City
 
 UTC = dt.timezone.utc
 LONDON = City("London", "Europe/London", 51.51, -0.13, 0)

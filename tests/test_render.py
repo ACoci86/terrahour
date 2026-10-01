@@ -5,9 +5,9 @@ import time
 
 import pytest
 
-from zone_timeline.canvas import Canvas, sgr
-from zone_timeline.compose import compose, is_compact
-from zone_timeline.themes import C, THEME_ORDER, apply_theme
+from terrahour.canvas import Canvas, sgr
+from terrahour.compose import compose, is_compact
+from terrahour.themes import C, THEME_ORDER, apply_theme
 
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
@@ -46,7 +46,7 @@ def test_full_frame_has_exact_dimensions(state, now, size):
 
 def test_main_view_content(state, now):
     text = "\n".join(plain(compose(130, 40, state, now, now)))
-    assert "zone-timeline" in text and "● LIVE" in text
+    assert "terrahour" in text and "● LIVE" in text
     assert "14:30:00 UTC" in text and "Wed 18 Mar 2026" in text
     for name in ("San Francisco", "New York", "London", "Tokyo", "Sydney"):
         assert name in text
@@ -134,7 +134,7 @@ def test_help_fits_in_a_narrow_terminal(state, now):
 
 
 def test_add_overlay_lists_results(state, now):
-    from zone_timeline.places import refresh_results
+    from terrahour.places import refresh_results
     state.mode, state.buf = "add", "naples"
     refresh_results(state)
     text = "\n".join(plain(compose(120, 40, state, now, now)))
@@ -161,7 +161,7 @@ def test_narrow_terminal_shows_a_hint_instead_of_crashing(state, now):
 
 
 def test_offline_mode_does_not_pretend_to_search_online(state, now):
-    from zone_timeline.places import refresh_results
+    from terrahour.places import refresh_results
     state.mode, state.buf = "add", "xqzjvwk"
     refresh_results(state)
     text = "\n".join(plain(compose(120, 40, state, now, now)))

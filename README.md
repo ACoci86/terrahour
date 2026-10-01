@@ -1,11 +1,11 @@
-# zone-timeline
+# terrahour
 
-![tests](https://github.com/ACoci86/zone-timeline/actions/workflows/tests.yml/badge.svg)
+![tests](https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg)
 
 A world clock for the terminal, with a map that shows where it is daytime and a 24-hour
 timeline that shows when your cities are at work. No dependencies, just Python.
 
-![zone-timeline main view](docs/main.png)
+![terrahour main view](docs/main.png)
 
 I wrote it because I kept opening a browser tab to work out whether 10am in New York is a
 sane time for someone in Singapore. Now I press `g`, type `10am`, and look at the bars.
@@ -56,33 +56,33 @@ days) and a UTF-8 locale. Linux and macOS are supported. On Windows use WSL, the
 a Unix terminal.
 
 ```sh
-pipx install git+https://github.com/ACoci86/zone-timeline
+pipx install git+https://github.com/ACoci86/terrahour
 ```
 
 or, without pipx:
 
 ```sh
-pip install git+https://github.com/ACoci86/zone-timeline
+pip install git+https://github.com/ACoci86/terrahour
 ```
 
 or just clone it and run it in place, there is nothing to build:
 
 ```sh
-git clone https://github.com/ACoci86/zone-timeline
-cd zone-timeline
-python -m zone_timeline
+git clone https://github.com/ACoci86/terrahour
+cd terrahour
+python -m terrahour
 ```
 
 ## Usage
 
 ```sh
-zone-timeline                                  # your saved cities (a sensible default set the first time)
-zone-timeline Europe/Berlin "Home=America/Chicago" Naples   # a one-off set of zones or city names, not saved
-zone-timeline --markets                        # start in the exchange view
-zone-timeline --at 2026-10-05T09:00Z           # start frozen at a given time
-zone-timeline --theme nord --12h
-zone-timeline --ambient                        # straight into the screensaver view
-zone-timeline --reset                          # forget saved cities and settings
+terrahour                                  # your saved cities (a sensible default set the first time)
+terrahour Europe/Berlin "Home=America/Chicago" Naples   # a one-off set of zones or city names, not saved
+terrahour --markets                        # start in the exchange view
+terrahour --at 2026-10-05T09:00Z           # start frozen at a given time
+terrahour --theme nord --12h
+terrahour --ambient                        # straight into the screensaver view
+terrahour --reset                          # forget saved cities and settings
 ```
 
 Press `?` inside the app for the full list of keys. The ones you will use most:
@@ -101,18 +101,18 @@ Press `?` inside the app for the full list of keys. The ones you will use most:
 | `q` | quit |
 
 Everything you change in the app (cities, theme, home, working hours, alerts) is saved to
-`~/.config/zone-timeline/config.json`. Zones given on the command line are session-only and
+`~/.config/terrahour/config.json`. Zones given on the command line are session-only and
 leave that file alone.
 
 ## Status bars and scripts
 
 ```sh
-$ zone-timeline --line
+$ terrahour --line
 SF 07:30 · NY 10:30 · LON 14:30 · UTC 14:30 · DUB 18:30 · MUM 20:00 · SIN 22:30 · TOK 23:30 · SYD 01:30+1
 
-$ zone-timeline --watch            # the same line, updating in place (good in a small tmux pane)
-$ zone-timeline --tmux             # with tmux colour codes, for your status-right
-$ zone-timeline --json --at 2026-03-18T14:30Z | jq '.cities[] | select(.open)'
+$ terrahour --watch            # the same line, updating in place (good in a small tmux pane)
+$ terrahour --tmux             # with tmux colour codes, for your status-right
+$ terrahour --json --at 2026-03-18T14:30Z | jq '.cities[] | select(.open)'
 ```
 
 The JSON includes local time, UTC offset, whether the city is inside working hours, minutes
@@ -127,7 +127,7 @@ Two features talk to the internet, and both are optional:
   through the Open-Meteo geocoding API.
 * Weather, when you turn it on with `W`, comes from the Open-Meteo forecast API.
 
-Set `ZONE_TIMELINE_OFFLINE=1` to switch both off. Nothing else leaves your machine.
+Set `TERRAHOUR_OFFLINE=1` to switch both off. Nothing else leaves your machine.
 
 ## How it is put together
 
@@ -147,7 +147,7 @@ It is a single Python package with no third-party dependencies. The pieces:
 | `state.py` | the State object and the config file |
 | `alerts.py`, `weather.py` | what the names say |
 | `themes.py` | colours; every module reads them through the active theme object `C` |
-| `data/` | the city list, the land mask and the exchange list, with [their own README](zone_timeline/data/README.md) |
+| `data/` | the city list, the land mask and the exchange list, with [their own README](terrahour/data/README.md) |
 
 The map is a 0.25 degree land mask folded into a summed-area table, so any zoom level can ask
 "how much of this box is land?" in constant time, and the braille cells come straight out of

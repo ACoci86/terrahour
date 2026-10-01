@@ -16,7 +16,7 @@ from .themes import THEME_ORDER, apply_theme
 
 
 def main():
-    ap = argparse.ArgumentParser(prog="zone-timeline", description="World clock, map and 24h planner for the terminal.")
+    ap = argparse.ArgumentParser(prog="terrahour", description="World clock, map and 24h planner for the terminal.")
     ap.add_argument("zones", nargs="*", help="IANA zones, optionally Label=Zone (session only; saved cities untouched)")
     ap.add_argument("--at", help="fix the time (ISO 8601, UTC unless it has an offset)")
     ap.add_argument("--once", action="store_true", help="print one frame and exit")
@@ -33,14 +33,14 @@ def main():
     ap.add_argument("--tmux", action="store_true", help="like --line with tmux colour codes")
     ap.add_argument("--json", action="store_true", help="print JSON and exit")
     ap.add_argument("--reset", action="store_true", help="forget saved cities and settings")
-    ap.add_argument("--version", action="version", version="zone-timeline " + __version__)
+    ap.add_argument("--version", action="version", version="terrahour " + __version__)
     args = ap.parse_args()
     if args.reset:
         try:
             os.remove(config_path())
-            print("zone-timeline: saved settings removed")
+            print("terrahour: saved settings removed")
         except FileNotFoundError:
-            print("zone-timeline: nothing to reset")
+            print("terrahour: nothing to reset")
         return
     st = state_from_config()
     if args.theme:
@@ -77,7 +77,7 @@ def main():
         print("\n".join(compose(W, H, st, now, utcnow().replace(microsecond=0)).lines()))
         return
     if not sys.stdin.isatty() or not sys.stdout.isatty():
-        sys.exit("zone-timeline: needs an interactive terminal (use --once, --line or --json otherwise)")
+        sys.exit("terrahour: needs an interactive terminal (use --once, --line or --json otherwise)")
     try:
         run(st, at)
     except KeyboardInterrupt:

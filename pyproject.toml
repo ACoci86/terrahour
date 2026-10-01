@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "zone-timeline"
+name = "terrahour"
 dynamic = ["version"]
 description = "World clock, world map and 24-hour meeting planner for the terminal"
 readme = "README.md"
@@ -29,20 +29,20 @@ dependencies = []
 dev = ["pytest", "pillow"]
 
 [project.scripts]
-zone-timeline = "zone_timeline.cli:main"
+terrahour = "terrahour.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/ACoci86/zone-timeline"
-Issues = "https://github.com/ACoci86/zone-timeline/issues"
+Homepage = "https://github.com/ACoci86/terrahour"
+Issues = "https://github.com/ACoci86/terrahour/issues"
 
 [tool.setuptools]
-packages = ["zone_timeline"]
+packages = ["terrahour"]
 
 [tool.setuptools.dynamic]
-version = { attr = "zone_timeline.__version__" }
+version = { attr = "terrahour.__version__" }
 
 [tool.setuptools.package-data]
-zone_timeline = ["data/*"]
+terrahour = ["data/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

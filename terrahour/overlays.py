@@ -202,7 +202,7 @@ def draw_alerts(cv, W, H, st):
         cv.fill(x + 1, yy, w - 2, bg)
         cv.put(x + 3, yy, "♪", C.AMBER, bg, True)
         cv.put(x + 5, yy, alert_desc(a)[:w - 8], C.WHITE if i == st.aidx else C.TEXT, bg)
-    cv.put(x + 3, y + h - 4, "Rings the bell and shows a notification while zone-timeline is open.", C.DIM, C.PANEL_BG)
+    cv.put(x + 3, y + h - 4, "Rings the bell and shows a notification while terrahour is open.", C.DIM, C.PANEL_BG)
     cv.put(x + 3, y + h - 2, "n new   d delete   ↑↓ select   Esc close", C.DIM, C.PANEL_BG)
 
 

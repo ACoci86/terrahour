@@ -1,8 +1,8 @@
 import pytest
 
-from zone_timeline.places import (ABBR, DEFAULT_NAMES, City, _dms, cities_from_args, city_db, default_cities,
+from terrahour.places import (ABBR, DEFAULT_NAMES, City, _dms, cities_from_args, city_db, default_cities,
                                   make_city, markets, next_cidx, parse_sessions, search_db)
-from zone_timeline.themes import C
+from terrahour.themes import C
 
 
 def test_city_db_is_big_and_well_formed():
