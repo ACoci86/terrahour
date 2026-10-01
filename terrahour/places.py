@@ -53,7 +53,7 @@ def _dms(s, deg):
 
 _db = None
 def city_db():
-    """Searchable places: a curated list, ~6,000 cities over 100k people (GeoNames, CC-BY 4.0), and zone.tab."""
+    """Searchable places: a curated list, ~12,000 cities over 50k people (GeoNames, CC-BY 4.0), and zone.tab."""
     global _db
     if _db is not None:
         return _db

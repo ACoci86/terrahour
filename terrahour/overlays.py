@@ -34,7 +34,7 @@ def draw_add(cv, W, H, st, now):
     if not st.buf.strip():
         cv.put(x + 3, y + 5, "Type any city, a country or a zone name:", C.DIM, C.PANEL_BG)
         cv.put(x + 3, y + 6, "naples \u00b7 new zealand \u00b7 Asia/Tokyo \u00b7 springfield", C.KEY, C.PANEL_BG)
-        cv.put(x + 3, y + 8, "About 6,000 big cities are built in; any other city is looked up online.", C.DIM, C.PANEL_BG)
+        cv.put(x + 3, y + 8, "About 12,000 cities are built in; any other city is looked up online.", C.DIM, C.PANEL_BG)
     elif not st.results:
         cv.put(x + 3, y + 5, "No match yet." if geo_status(st.buf).startswith("search") else
                "No match. Check the spelling, or try a zone like Europe/Berlin.", C.AMBER, C.PANEL_BG)
