@@ -36,7 +36,7 @@ timeline that shows when your cities are at work.
 * **Fits anywhere.** Below about 76 columns it switches to a compact layout that works in a
   tmux split. `--line` prints a one-liner for a status bar.
 * **Six themes** (midnight, nord, dracula, light, mono, colorblind), 12 or 24 hour clock,
-  mouse support, and about 6,000 cities built in with online lookup for the rest.
+  mouse support, and about 12,000 cities built in with online lookup for the rest.
 
 | Exchanges | Compact layout for a tmux split |
 | --- | --- |
@@ -56,16 +56,22 @@ You need Python 3.9 or newer, a terminal with truecolor support (almost all of t
 days) and a UTF-8 locale. Developed on Linux. macOS is covered by the automated tests, but I
 have not tried it by hand. On Windows use WSL, the app relies on a Unix terminal.
 
+The simplest way is [pipx](https://pipx.pypa.io/), which installs the `terrahour` command for
+your user:
+
 ```sh
 pipx install terrahour
+terrahour
 ```
 
-Then run `terrahour`. If your shell cannot find the command, run `pipx ensurepath` once and
-open a new terminal. To try it without installing anything, `pipx run terrahour` or
-`uvx terrahour`.
+If you do not have pipx, get it with `sudo apt install pipx` on Debian and Ubuntu or
+`brew install pipx` on macOS. If your shell cannot find `terrahour` afterwards, run
+`pipx ensurepath` once and open a new terminal.
 
-or, without pipx, in a virtual environment (recent Debian and Ubuntu refuse a plain
-`pip install` outside one):
+**To try it without installing anything:** `pipx run terrahour` or `uvx terrahour`.
+
+**With pip, in a virtual environment.** Recent Debian and Ubuntu refuse a plain `pip install`
+outside one. The command is then available whenever that environment is active:
 
 ```sh
 python3 -m venv .venv && . .venv/bin/activate
@@ -73,17 +79,19 @@ pip install terrahour
 terrahour
 ```
 
-The command is available whenever that environment is active.
-
-or just clone it and run it in place, there is nothing to build:
+**From a clone.** There is nothing to build, so you can run it in place:
 
 ```sh
 git clone https://github.com/ACoci86/terrahour
 cd terrahour
-python -m terrahour
+python3 -m terrahour
 ```
 
 ## Usage
+
+Run `terrahour`. The first time it starts with a default set of cities: press `a` to add your
+own, `d` to remove one, `*` to mark the selected city as home, `?` for every key and `q` to
+quit.
 
 ```sh
 terrahour                                  # your saved cities (a sensible default set the first time)
@@ -166,7 +174,7 @@ that. Sun position uses the usual NOAA approximation, good to a few minutes.
 ## Development
 
 ```sh
-python -m venv .venv && . .venv/bin/activate
+python3 -m venv .venv && . .venv/bin/activate
 pip install -e ".[dev]"
 pytest
 ```
