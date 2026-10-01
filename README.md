@@ -57,18 +57,19 @@ days) and a UTF-8 locale. Developed on Linux. macOS is covered by the automated 
 have not tried it by hand. On Windows use WSL, the app relies on a Unix terminal.
 
 ```sh
-pipx install git+https://github.com/ACoci86/terrahour
+pipx install terrahour
 ```
 
 Then run `terrahour`. If your shell cannot find the command, run `pipx ensurepath` once and
-open a new terminal.
+open a new terminal. To try it without installing anything, `pipx run terrahour` or
+`uvx terrahour`.
 
 or, without pipx, in a virtual environment (recent Debian and Ubuntu refuse a plain
 `pip install` outside one):
 
 ```sh
 python3 -m venv .venv && . .venv/bin/activate
-pip install git+https://github.com/ACoci86/terrahour
+pip install terrahour
 terrahour
 ```
 
