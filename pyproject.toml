@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "terrahour"
 dynamic = ["version"]
-description = "World clock, world map and 24-hour meeting planner for the terminal"
+description = "World clock for the terminal with a day and night map and a 24-hour timeline"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Alessio Coci" }]
-keywords = ["world clock", "time zones", "tui", "terminal", "timezone", "meeting planner", "tmux"]
+keywords = ["world clock", "time zones", "tui", "terminal", "timezone", "world map", "tmux"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",

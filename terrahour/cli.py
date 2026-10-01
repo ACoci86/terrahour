@@ -16,7 +16,7 @@ from .themes import THEME_ORDER, apply_theme
 
 
 def main():
-    ap = argparse.ArgumentParser(prog="terrahour", description="World clock, map and 24h planner for the terminal.")
+    ap = argparse.ArgumentParser(prog="terrahour", description="World clock, map and 24h timeline for the terminal.")
     ap.add_argument("zones", nargs="*", help="IANA zones, optionally Label=Zone (session only; saved cities untouched)")
     ap.add_argument("--at", help="fix the time (ISO 8601, UTC unless it has an offset)")
     ap.add_argument("--once", action="store_true", help="print one frame and exit")
