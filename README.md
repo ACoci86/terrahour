@@ -3,7 +3,7 @@
 ![tests](https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg)
 
 A world clock for the terminal, with a map that shows where it is daytime and a 24-hour
-timeline that shows when your cities are at work. No dependencies, just Python.
+timeline that shows when your cities are at work.
 
 | Main view: the day and night map above a timeline per city |
 | --- |
