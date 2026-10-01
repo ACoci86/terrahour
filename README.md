@@ -5,12 +5,13 @@
 A world clock for the terminal, with a map that shows where it is daytime and a 24-hour
 timeline that shows when your cities are at work. No dependencies, just Python.
 
-![terrahour main view](docs/main.png)
+| Main view: the day and night map above a timeline per city |
+| --- |
+| ![terrahour main view](docs/main.png) |
 
-I vibecoded it because I have two fascinations: maps, and computers drawing pixel art in a
-terminal.
-
-![demo](docs/demo.gif)
+| A quick tour: scrubbing time, exchanges, DST radar, ambient view |
+| --- |
+| ![demo](docs/demo.gif) |
 
 ## What it does
 
