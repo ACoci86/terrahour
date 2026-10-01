@@ -1,5 +1,7 @@
 # zone-timeline
 
+![tests](https://github.com/ACoci86/zone-timeline/actions/workflows/tests.yml/badge.svg)
+
 A world clock for the terminal, with a map that shows where it is daytime and a 24-hour
 timeline that shows when your cities are at work. No dependencies, just Python.
 
