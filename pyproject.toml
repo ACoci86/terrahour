@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zone-timeline"
+dynamic = ["version"]
+description = "World clock, world map and 24-hour meeting planner for the terminal"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Alessio Coci" }]
+keywords = ["world clock", "time zones", "tui", "terminal", "timezone", "meeting planner", "tmux"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "pillow"]
+
+[project.scripts]
+zone-timeline = "zone_timeline.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/YOUR-GITHUB-USERNAME/zone-timeline"
+Issues = "https://github.com/YOUR-GITHUB-USERNAME/zone-timeline/issues"
+
+[tool.setuptools]
+packages = ["zone_timeline"]
+
+[tool.setuptools.dynamic]
+version = { attr = "zone_timeline.__version__" }
+
+[tool.setuptools.package-data]
+zone_timeline = ["data/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

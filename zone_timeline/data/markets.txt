@@ -1,0 +1,11 @@
+# name | IANA zone | lat | lon | trading sessions, local HH:MM-HH:MM (weekdays only)
+NYSE / Nasdaq|America/New_York|40.71|-74.01|09:30-16:00
+B3 Sao Paulo|America/Sao_Paulo|-23.55|-46.63|10:00-17:00
+LSE London|Europe/London|51.51|-0.13|08:00-16:30
+Xetra Frankfurt|Europe/Berlin|50.11|8.68|09:00-17:30
+NSE Mumbai|Asia/Kolkata|19.08|72.88|09:15-15:30
+SSE Shanghai|Asia/Shanghai|31.23|121.47|09:30-11:30,13:00-15:00
+HKEX|Asia/Hong_Kong|22.32|114.17|09:30-12:00,13:00-16:00
+TSE Tokyo|Asia/Tokyo|35.68|139.69|09:00-11:30,12:30-15:30
+KRX Seoul|Asia/Seoul|37.57|126.98|09:00-15:30
+ASX Sydney|Australia/Sydney|-33.87|151.21|10:00-16:00
