@@ -7,8 +7,8 @@ timeline that shows when your cities are at work. No dependencies, just Python.
 
 ![terrahour main view](docs/main.png)
 
-I wrote it because I kept opening a browser tab to work out whether 10am in New York is a
-sane time for someone in Singapore. Now I press `g`, type `10am`, and look at the bars.
+I vibecoded it because I have two fascinations: maps, and computers drawing pixel art in a
+terminal.
 
 ![demo](docs/demo.gif)
 
