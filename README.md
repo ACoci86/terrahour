@@ -60,11 +60,19 @@ a Unix terminal.
 pipx install git+https://github.com/ACoci86/terrahour
 ```
 
-or, without pipx:
+Then run `terrahour`. If your shell cannot find the command, run `pipx ensurepath` once and
+open a new terminal.
+
+or, without pipx, in a virtual environment (recent Debian and Ubuntu refuse a plain
+`pip install` outside one):
 
 ```sh
+python3 -m venv .venv && . .venv/bin/activate
 pip install git+https://github.com/ACoci86/terrahour
+terrahour
 ```
+
+The command is available whenever that environment is active.
 
 or just clone it and run it in place, there is nothing to build:
 
