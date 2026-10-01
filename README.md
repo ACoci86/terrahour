@@ -53,8 +53,8 @@ timeline that shows when your cities are at work.
 ## Install
 
 You need Python 3.9 or newer, a terminal with truecolor support (almost all of them these
-days) and a UTF-8 locale. Linux and macOS are supported. On Windows use WSL, the app relies on
-a Unix terminal.
+days) and a UTF-8 locale. Developed on Linux. macOS is covered by the automated tests, but I
+have not tried it by hand. On Windows use WSL, the app relies on a Unix terminal.
 
 ```sh
 pipx install git+https://github.com/ACoci86/terrahour
