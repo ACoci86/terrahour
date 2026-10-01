@@ -32,8 +32,8 @@ dev = ["pytest", "pillow"]
 zone-timeline = "zone_timeline.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/YOUR-GITHUB-USERNAME/zone-timeline"
-Issues = "https://github.com/YOUR-GITHUB-USERNAME/zone-timeline/issues"
+Homepage = "https://github.com/ACoci86/zone-timeline"
+Issues = "https://github.com/ACoci86/zone-timeline/issues"
 
 [tool.setuptools]
 packages = ["zone_timeline"]

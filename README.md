@@ -54,19 +54,19 @@ days) and a UTF-8 locale. Linux and macOS are supported. On Windows use WSL, the
 a Unix terminal.
 
 ```sh
-pipx install git+https://github.com/YOUR-GITHUB-USERNAME/zone-timeline
+pipx install git+https://github.com/ACoci86/zone-timeline
 ```
 
 or, without pipx:
 
 ```sh
-pip install git+https://github.com/YOUR-GITHUB-USERNAME/zone-timeline
+pip install git+https://github.com/ACoci86/zone-timeline
 ```
 
 or just clone it and run it in place, there is nothing to build:
 
 ```sh
-git clone https://github.com/YOUR-GITHUB-USERNAME/zone-timeline
+git clone https://github.com/ACoci86/zone-timeline
 cd zone-timeline
 python -m zone_timeline
 ```
