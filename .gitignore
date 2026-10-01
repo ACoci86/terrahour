@@ -22,3 +22,6 @@ htmlcov/
 .idea/
 .DS_Store
 *.swp
+
+# The pre-refactor single-file version, kept locally for reference
+archive/
