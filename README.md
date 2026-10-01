@@ -7,11 +7,11 @@ timeline that shows when your cities are at work.
 
 | Main view: the day and night map above a timeline per city |
 | --- |
-| ![terrahour main view](docs/main.png) |
+| ![terrahour main view](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/main.png) |
 
 | A quick tour: scrubbing time, exchanges, DST radar, ambient view |
 | --- |
-| ![demo](docs/demo.gif) |
+| ![demo](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/demo.gif) |
 
 ## What it does
 
@@ -40,15 +40,15 @@ timeline that shows when your cities are at work.
 
 | Exchanges | Compact layout for a tmux split |
 | --- | --- |
-| ![markets view](docs/markets.png) | ![compact view](docs/compact.png) |
+| ![markets view](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/markets.png) | ![compact view](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/compact.png) |
 
 | DST radar | Adding a city |
 | --- | --- |
-| ![DST radar](docs/radar.png) | ![add city](docs/add-city.png) |
+| ![DST radar](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/radar.png) | ![add city](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/add-city.png) |
 
 | Ambient view | Light theme |
 | --- | --- |
-| ![ambient view](docs/ambient.png) | ![light theme](docs/theme-light.png) |
+| ![ambient view](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/ambient.png) | ![light theme](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/theme-light.png) |
 
 ## Install
 
@@ -156,7 +156,7 @@ It is a single Python package with no third-party dependencies. The pieces:
 | `state.py` | the State object and the config file |
 | `alerts.py`, `weather.py` | what the names say |
 | `themes.py` | colours; every module reads them through the active theme object `C` |
-| `data/` | the city list, the land mask and the exchange list, with [their own README](terrahour/data/README.md) |
+| `data/` | the city list, the land mask and the exchange list, with [their own README](https://github.com/ACoci86/terrahour/blob/main/terrahour/data/README.md) |
 
 The map is a 0.25 degree land mask folded into a summed-area table, so any zoom level can ask
 "how much of this box is land?" in constant time, and the braille cells come straight out of
@@ -183,4 +183,4 @@ everything in `docs/` (it needs Pillow and the DejaVu fonts).
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](https://github.com/ACoci86/terrahour/blob/main/LICENSE).
