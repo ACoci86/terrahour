@@ -87,6 +87,15 @@ cd terrahour
 python3 -m terrahour
 ```
 
+### Updating
+
+```sh
+pipx upgrade terrahour
+```
+
+If you installed with pip, run `pip install --upgrade terrahour` in the same environment. In
+a clone, `git pull`. `terrahour --version` tells you which version you have.
+
 ## Usage
 
 Run `terrahour`. The first time it starts with a default set of cities: press `a` to add your
