@@ -122,6 +122,19 @@ Everything you change in the app (cities, theme, home, working hours, alerts) is
 `~/.config/terrahour/config.json`. Zones given on the command line are session-only and
 leave that file alone.
 
+## Window size
+
+What you see depends on the size of your terminal window:
+
+| Your window | What you see |
+| --- | --- |
+| At least 76 columns wide and 21 rows tall | Everything: the map on top and the city table under it |
+| Wide enough, but only 16 to 20 rows tall | The city table on its own, because the map would not fit |
+| Narrower than 76 columns, or shorter than 16 rows | The compact layout: one line per city with a small timeline, no map |
+
+On a small map only the selected city is named, so the dots stay readable. Press `c` if you
+want to force the compact layout, or to go back.
+
 ## Status bars and scripts
 
 ```sh

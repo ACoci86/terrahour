@@ -11,6 +11,10 @@ from .weather import weather_cell
 from .worldmap import ZOOMS, land_cells, map_view
 
 
+LABEL_FULL_H = 20       # map rows from which city labels carry the zone line too
+LABEL_NAMES_H = 12      # map rows from which every city is named; below, only the selected one
+
+
 def draw_ticks(cv, y, xb, nb, start, span, step24=2):
     if span >= 24:
         for h in range(0, 25, step24):
@@ -112,11 +116,15 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
         _, off, abbr = infos[i]
         sub = "(%s)" % fmt_off(off) if abbr in ("UTC", "") else "%s (%s)" % (abbr, fmt_off(off))
         chosen = None
-        # name over zone where there is room, then the name alone, then just the dot: labels never overlap
-        for lines, w, cands in (
-                (2, max(len(ci.name), len(sub)), [(2, 0), (-1, 0), (2, -2), (-1, -2), (2, 2), (-1, 2),
-                                                  (0, -3), (0, 2), (2, -1), (-1, -1)]),
-                (1, len(ci.name), [(2, 0), (-1, 0), (2, -1), (-1, -1), (2, 1), (-1, 1), (0, -1), (0, 1)])):
+        # name over zone where there is room, then the name alone, then just the dot: labels never overlap.
+        # The smaller the map, the less it carries: names only on a medium one, and on a small one the
+        # selected city alone is named (the dots keep the colours of the table rows).
+        options = [(2, max(len(ci.name), len(sub)), [(2, 0), (-1, 0), (2, -2), (-1, -2), (2, 2), (-1, 2),
+                                                     (0, -3), (0, 2), (2, -1), (-1, -1)]),
+                   (1, len(ci.name), [(2, 0), (-1, 0), (2, -1), (-1, -1), (2, 1), (-1, 1), (0, -1), (0, 1)])]
+        if mh < LABEL_FULL_H:
+            options = options[1:] if (mh >= LABEL_NAMES_H or i == sel) else []
+        for lines, w, cands in options:
             for side, dy in cands:
                 lx, ly = x + {2: 2, -1: -w - 1, 0: -w // 2}[side], y + dy
                 if lx < 1 or lx + w >= W - 1 or ly < y0 or ly + lines - 1 >= y0 + mh:
