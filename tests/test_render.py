@@ -154,6 +154,56 @@ def test_every_theme_renders(state, now, theme):
     assert cv.st[5][5][1] == C.BG and C.name == theme
 
 
+def has_map(lines):
+    return any(0x2800 < ord(ch) <= 0x28FF for ln in lines for ch in ln)
+
+
+def test_standard_80x24_terminal_keeps_the_map(state, now):
+    lines = plain(compose(80, 24, state, now, now))
+    assert has_map(lines)
+    assert "1-8 of 9" in "\n".join(lines)                  # the table scrolls to make room for it
+    assert all(ln.strip() for ln in lines)                 # and nothing is left blank
+
+
+def test_very_short_terminal_drops_the_map_without_leaving_a_gap(state, now):
+    lines = plain(compose(80, 18, state, now, now))
+    assert not has_map(lines) and "╭" in lines[1]
+
+
+@pytest.mark.parametrize("W", [76, 80, 84, 88, 92, 120])
+def test_top_bar_items_never_run_into_each_other(state, now, W):
+    state.alerts = [{"kind": "timer"}]
+    top = plain(compose(W, 30, state, now, now))[0]
+    assert re.search(r"\s{2}Wed 18 Mar 2026 {3}14:30:00 UTC {3}● LIVE", top)
+    assert "work 09–17" in top
+
+
+def test_table_sits_right_under_the_map_in_a_tall_window(state, now):
+    lines = plain(compose(76, 50, state, now, now))
+    table_top = next(i for i, ln in enumerate(lines) if "╭" in ln)
+    assert table_top > 8 and all(ln.strip() for ln in lines[1:table_top])
+
+
+@pytest.mark.parametrize("size", [(80, 24), (82, 27), (100, 30), (160, 45)])
+@pytest.mark.parametrize("markets", [False, True])
+def test_map_labels_never_overlap(state, now, size, markets):
+    state.markets = markets
+    cv = compose(size[0], size[1], state, now, now)
+    rects = [m[3] for m in cv.meta["markers"]]
+    assert len(rects) == len(state.rows())
+    for i, a in enumerate(rects):
+        for b in rects[i + 1:]:
+            if a[2] - a[0] > 1 and b[2] - b[0] > 1:        # two labels, not bare dots
+                assert a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1]
+
+
+def test_details_line_is_cut_at_whole_items(state, now):
+    for W in range(76, 131):
+        line = plain(compose(W, 40, state, now, now))[38].rstrip()
+        assert len(line) <= W - 2
+        assert re.search(r"(open(s in| ·) \d+h\d\d|☾ \d\d:\d\d|day \d+h\d\dm|from here|\(\d+d\)|\d+ \w{3}|°[EW])$", line), line
+
+
 def test_narrow_terminal_shows_a_hint_instead_of_crashing(state, now):
     state.compact = "off"
     text = "\n".join(plain(compose(50, 30, state, now, now)))

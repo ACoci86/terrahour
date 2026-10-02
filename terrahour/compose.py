@@ -11,6 +11,8 @@ from .overlays import draw_overlays
 from .themes import C, mix
 from .weather import weather_refresh
 
+MAP_MIN_H = 8       # rows; below this the map is not worth drawing
+
 
 def is_compact(st, W, H):
     if st.compact == "on":
@@ -194,15 +196,22 @@ def compose(W, H, st, now, live_now):
     ov = 1 if ((st.markets or st.overlap) and n >= 2) else 0
     max_vis = max(1, H - 3 - 4 - ov)
     vis = min(n, max_vis)
+    # short window: scroll the table rather than lose the map, as long as a few rows stay in view
+    room = max_vis - MAP_MIN_H
+    if vis > room >= min(n, 5) and int((W - 2) / 5.14) >= MAP_MIN_H:
+        vis = room
     top = max(0, min(sel - vis // 2, n - vis))
     table_h = vis + 4 + ov
     avail = H - 1 - table_h - 2
     mh = min(avail, int((W - 2) / 5.14))
-    if mh >= 8:
+    if mh >= MAP_MIN_H:
         mw = min(W - 2, int(mh * 5.14))
         flags = [status_info(c, now, st.work)[0] for c in rows] if st.markets else None
         draw_map(cv, W, 1, mw, mh, infos, rows, sel, st, now, flags)
-    draw_table(cv, W, H - 2 - table_h, vis, top, infos, rows, sel, st, now)
+    else:
+        mh = 0
+    # the table sits right under the map; rows the map cannot use stay empty above the details line
+    draw_table(cv, W, 1 + mh, vis, top, infos, rows, sel, st, now)
     draw_details(cv, W, H - 2, st, infos, rows, sel, now)
     draw_footer(cv, W, H - 1, st)
     draw_overlays(cv, W, H, st, now)

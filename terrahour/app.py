@@ -3,6 +3,7 @@ import os
 import re
 import select
 import shutil
+import signal
 import sys
 import time
 
@@ -30,6 +31,12 @@ def run(st, fixed_at):
     if fixed_at:
         st.frozen = fixed_at
     prev, prev_size, meta = [], None, {}
+    # a resize wakes the loop at once (through a pipe) instead of waiting for the next tick
+    wake_r, wake_w = os.pipe()
+    os.set_blocking(wake_r, False)
+    os.set_blocking(wake_w, False)
+    old_wakeup = signal.set_wakeup_fd(wake_w, warn_on_full_buffer=False)
+    old_winch = signal.signal(signal.SIGWINCH, lambda *a: None)
     try:
         tty.setcbreak(fd)
         while True:
@@ -55,7 +62,13 @@ def run(st, fixed_at):
             out.flush()
             prev = lines
             timeout = 0.2 if st.mode == "add" else 1.05 - live.microsecond / 1e6
-            if select.select([fd], [], [], max(0.05, min(timeout, 1.0)))[0]:
+            ready = select.select([fd, wake_r], [], [], max(0.05, min(timeout, 1.0)))[0]
+            if wake_r in ready:
+                try:
+                    os.read(wake_r, 1024)
+                except BlockingIOError:
+                    pass
+            if fd in ready:
                 data = os.read(fd, 1024).decode("utf-8", "ignore")
                 for k in TOKENS.findall(data):
                     mm = re.fullmatch(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])", k)
@@ -66,6 +79,10 @@ def run(st, fixed_at):
                         return
                     now = st.frozen or live.replace(microsecond=0)
     finally:
+        signal.signal(signal.SIGWINCH, old_winch if old_winch is not None else signal.SIG_DFL)
+        signal.set_wakeup_fd(old_wakeup)
+        os.close(wake_r)
+        os.close(wake_w)
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
         out.write("\x1b[0m" + (MOUSE_OFF if st.mouse else "") + "\x1b[?25h\x1b[?1049l")
         out.flush()

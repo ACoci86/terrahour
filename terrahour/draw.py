@@ -43,7 +43,6 @@ def draw_topbar(cv, W, st, now, live_now):
     bits = ["markets" if st.markets else "work %02d–%02d" % st.work, "12h" if st.h12 else "24h", C.name]
     if st.weather != "off":
         bits.append("°" + st.weather.upper())
-    cv.put(16, 0, "  ·  ".join(bits), C.DIM, C.TOP_BG)
     if st.frozen:
         chip = "⏸ %s" % fmt_delta((now - live_now).total_seconds())
         chip_col = C.AMBER
@@ -56,12 +55,17 @@ def draw_topbar(cv, W, st, now, live_now):
     cv.meta["chip"] = (x, len(chip))
     x -= len(clock) + 3
     cv.put(x, 0, clock, C.CYAN, C.TOP_BG, True)
-    x -= len(date) + 3
-    cv.put(x, 0, date, C.TEXT, C.TOP_BG)
+    if x - len(date) - 3 >= 16:
+        x -= len(date) + 3
+        cv.put(x, 0, date, C.TEXT, C.TOP_BG)
     na = len(st.alerts) + sum(1 for a in st.alerts if False)
-    if na:
+    if na and x - len("♪ %d" % na) - 3 >= 16:
         t = "♪ %d" % na
-        cv.put(x - len(t) - 3, 0, t, C.AMBER, C.TOP_BG, True)
+        x -= len(t) + 3
+        cv.put(x, 0, t, C.AMBER, C.TOP_BG, True)
+    while bits and 16 + len("  ·  ".join(bits)) > x - 2:
+        bits.pop()                 # narrow terminal: the settings summary gives way to the clock
+    cv.put(16, 0, "  ·  ".join(bits), C.DIM, C.TOP_BG)
 
 
 def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
@@ -107,41 +111,50 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
         x, y = pts[i]
         _, off, abbr = infos[i]
         sub = "(%s)" % fmt_off(off) if abbr in ("UTC", "") else "%s (%s)" % (abbr, fmt_off(off))
-        w = max(len(ci.name), len(sub))
-        cands = [(2, 0), (-w - 1, 0), (2, -2), (-w - 1, -2), (2, 2), (-w - 1, 2),
-                 (-w // 2, -3), (-w // 2, 2), (2, -1), (-w - 1, -1)]
         chosen = None
-        for dx, dy in cands:
-            lx, ly = x + dx, y + dy
-            if lx < 1 or lx + w >= W - 1 or ly < y0 or ly + 1 >= y0 + mh:
-                continue
-            rect = (lx - 1, ly, lx + w + 1, ly + 2)
-            if any(not (rect[2] <= q[0] or q[2] <= rect[0] or rect[3] <= q[1] or q[3] <= rect[1]) for q in placed):
-                continue
-            if any(rect[0] <= q[0] < rect[2] and rect[1] <= q[1] < rect[3] for j, q in enumerate(pts) if j != i and q):
-                continue
-            if rect[0] <= x < rect[2] and rect[1] <= y < rect[3]:
-                continue
-            chosen = (lx, ly, rect)
-            break
-        if chosen is None:
-            chosen = (x + 2, y, (x + 1, y, x + 3 + w, y + 2))
-        placed.append(chosen[2])
-        chosen_by[i] = (chosen[0], chosen[1], w, sub)
+        # name over zone where there is room, then the name alone, then just the dot: labels never overlap
+        for lines, w, cands in (
+                (2, max(len(ci.name), len(sub)), [(2, 0), (-1, 0), (2, -2), (-1, -2), (2, 2), (-1, 2),
+                                                  (0, -3), (0, 2), (2, -1), (-1, -1)]),
+                (1, len(ci.name), [(2, 0), (-1, 0), (2, -1), (-1, -1), (2, 1), (-1, 1), (0, -1), (0, 1)])):
+            for side, dy in cands:
+                lx, ly = x + {2: 2, -1: -w - 1, 0: -w // 2}[side], y + dy
+                if lx < 1 or lx + w >= W - 1 or ly < y0 or ly + lines - 1 >= y0 + mh:
+                    continue
+                rect = (lx - 1, ly, lx + w + 1, ly + lines)
+                if any(not (rect[2] <= q[0] or q[2] <= rect[0] or rect[3] <= q[1] or q[3] <= rect[1]) for q in placed):
+                    continue
+                if any(rect[0] <= q[0] < rect[2] and rect[1] <= q[1] < rect[3] for q in pts if q):
+                    continue
+                chosen = (lx, ly, w, lines)
+                break
+            if chosen:
+                break
+        if chosen:
+            lx, ly, w, lines = chosen
+            placed.append((lx - 1, ly, lx + w + 1, ly + lines))
+            chosen_by[i] = (lx, ly, w, sub if lines == 2 else None)
+    dots = []
     for i, ci in enumerate(rows):
         if pts[i] is None:
             continue
         x, y = pts[i]
-        lx, ly, w, sub = chosen_by[i]
         is_sel = i == sel
         dimmed = (focus and not is_sel) or (open_flags is not None and not open_flags[i] and not is_sel)
         col = mix(C.BG, ci.color, 0.45) if dimmed else ci.color
-        for yy in (ly, ly + 1):
-            cv.put(lx - 1, yy, " " * (w + 2))
-        cv.put(lx, ly, ci.name, col, None, True)
-        cv.put(lx, ly + 1, sub, mix(C.BG, ci.color, 0.35 if dimmed else 0.75))
-        cv.put(x, y, "◉" if is_sel else "●", C.WHITE if is_sel else col, None, True)
-        cv.meta["markers"].append((i, x, y, (lx - 1, ly, lx + w + 1, ly + 2)))
+        hit = (x, y, x + 1, y + 1)
+        if i in chosen_by:
+            lx, ly, w, sub = chosen_by[i]
+            hit = (lx - 1, ly, lx + w + 1, ly + (2 if sub else 1))
+            for yy in range(ly, hit[3]):
+                cv.put(lx - 1, yy, " " * (w + 2))
+            cv.put(lx, ly, ci.name, col, None, True)
+            if sub:
+                cv.put(lx, ly + 1, sub, mix(C.BG, ci.color, 0.35 if dimmed else 0.75))
+        cv.meta["markers"].append((i, x, y, hit))
+        dots.append((x, y, "◉" if is_sel else "●", C.WHITE if is_sel else col))
+    for x, y, ch, col in dots:             # dots last, so no label can cover one
+        cv.put(x, y, ch, col, None, True)
 
 
 def layout(W, weather_on):
@@ -324,12 +337,14 @@ def draw_details(cv, W, y, st, infos, rows, sel, now):
         wt, wc = weather_cell(ci, st.weather, True)
         groups.append([(wt, wc)])
     s = sun_times(ci, now)
+    sun = None
     if isinstance(s, str):
         groups.append([("☼ " + s, C.SUN)])
     else:
         r, ss = s
-        groups.append([("☼ ", C.SUN), (fmt_clock(r, st.h12), C.TEXT), ("  ☾ ", C.MOON), (fmt_clock(ss, st.h12), C.TEXT),
-                       ("  day %dh%02dm" % divmod(int((ss - r).total_seconds() // 60), 60), C.DIM)])
+        sun = [("☼ ", C.SUN), (fmt_clock(r, st.h12), C.TEXT), ("  ☾ ", C.MOON), (fmt_clock(ss, st.h12), C.TEXT),
+               ("  day %dh%02dm" % divmod(int((ss - r).total_seconds() // 60), 60), C.DIM)]
+        groups.append(sun)
     d = (off - ref_offset(st, now)).total_seconds()
     ref = "home" if st.home else "here"
     groups.append([("same as " + ref if d == 0 else "%s from %s" % (fmt_rel(off - ref_offset(st, now)), ref), C.DIM)])
@@ -353,16 +368,23 @@ def draw_details(cv, W, y, st, infos, rows, sel, now):
         return sum(len(seg[0]) for g in gs for seg in g) + 5 * (len(gs) - 1)
     while len(groups) > 3 and width(groups) > W - 4:
         groups.pop()               # least important last: coordinates, gap, clock change, sun ...
+    if width(groups) > W - 4 and groups[-1] is sun:
+        sun.pop()                  # the day length goes before the sunrise and sunset times do
+    while len(groups) > 1 and width(groups) > W - 4:
+        groups.pop()
+    if width(groups) > W - 4:
+        groups[0].pop()            # only the name is left: drop its zone
     x = 2
     for gi, grp in enumerate(groups):
         if gi:
             cv.put(x, y, "  \u00b7  ", C.BORDER)
             x += 5
         for seg in grp:
+            if x + len(seg[0]) > W - 1:
+                cv.put(x, y, seg[0][:max(0, W - 2 - x)] + "\u2026", seg[1], None, len(seg) > 2 and seg[2])
+                return
             cv.put(x, y, seg[0], seg[1], None, len(seg) > 2 and seg[2])
             x += len(seg[0])
-        if x >= W:
-            break
 
 
 def draw_footer(cv, W, y, st):
