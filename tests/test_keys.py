@@ -4,7 +4,7 @@ import datetime as dt
 from terrahour.ambient import amb_entries
 from terrahour.compose import compose
 from terrahour.keys import handle_key, handle_mouse
-from terrahour.themes import C
+from terrahour.themes import C, THEME_ORDER
 from terrahour.worldmap import ZOOMS
 
 RIGHT, LEFT, UP, DOWN = "\x1b[C", "\x1b[D", "\x1b[A", "\x1b[B"
@@ -147,10 +147,20 @@ def test_toggles(state, now):
     assert state.focus
 
 
+def test_night_shade_steps_up_then_switches_off(state, now):
+    assert state.night_shade == 0
+    press(state, ["N"], now)
+    assert state.night_shade == 0.25 and "25%" in state.msg[0]
+    press(state, ["N", "N", "N"], now)
+    assert state.night_shade == 1.0 and "100%" in state.msg[0]
+    press(state, ["N"], now)
+    assert state.night_shade == 0 and "off" in state.msg[0]
+
+
 def test_theme_cycles_and_wraps(state, now):
     press(state, ["T"], now)
     assert C.name == "nord"
-    press(state, ["T"] * 5, now)
+    press(state, ["T"] * (len(THEME_ORDER) - 1), now)
     assert C.name == "midnight"
 
 

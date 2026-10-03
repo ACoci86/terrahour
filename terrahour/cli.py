@@ -24,6 +24,8 @@ def main():
     ap.add_argument("--12h", dest="h12", action="store_true", help="12-hour clock")
     ap.add_argument("--markets", action="store_true", help="start in the stock-exchange view")
     ap.add_argument("--theme", choices=THEME_ORDER, help="colour theme (saved when you change it in the app)")
+    ap.add_argument("--night-shade", type=float, metavar="0-1",
+                    help="shade over the night side of the map, 0 (off, the default) to 1; N cycles it in the app")
     ap.add_argument("--no-mouse", action="store_true", help="don't capture the mouse (keeps normal text selection)")
     ap.add_argument("--line", action="store_true", help="print one line, e.g. for a status bar, and exit")
     ap.add_argument("--ambient", action="store_true", help="start in the full-screen ambient (screensaver) view")
@@ -50,6 +52,8 @@ def main():
         st.persist = False
     if args.h12:
         st.h12 = True
+    if args.night_shade is not None:
+        st.night_shade = max(0.0, min(1.0, args.night_shade))
     st.markets = args.markets
     if args.compact:
         st.compact = "on"

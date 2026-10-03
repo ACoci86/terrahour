@@ -54,6 +54,7 @@ class State:
         self.mcenter = None         # (lat, lon) after panning / zooming at the pointer; None = follow the selection
         self.tsi = 0                # time-axis zoom index into TSPANS
         self.wheel = "zoom"         # zoom | scrub
+        self.night_shade = 0.0      # shade over the night side of the map, 0 (off) to 1
         self.drag = None
         self.ambient = False        # screensaver view
         self.amb_pin = None         # featured city index; None = cycle automatically
@@ -93,6 +94,7 @@ class State:
                 json.dump({"cities": [c.to_json() for c in self.cities], "h12": self.h12,
                            "work": list(self.work), "overlap": self.overlap, "theme": C.name,
                            "home": self.home, "weather": self.weather, "compact": self.compact, "wheel": self.wheel,
+                           "night_shade": self.night_shade,
                            "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
                                       for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
         except OSError:
@@ -132,6 +134,10 @@ def state_from_config():
             st.home = None
     st.compact = cfg.get("compact", "auto") if cfg.get("compact") in ("auto", "on", "off") else "auto"
     st.wheel = cfg.get("wheel", "zoom") if cfg.get("wheel") in ("zoom", "scrub") else "zoom"
+    try:
+        st.night_shade = max(0.0, min(1.0, float(cfg.get("night_shade", 0.0))))
+    except (TypeError, ValueError):
+        st.night_shade = 0.0
     st.weather = cfg.get("weather", "off") if cfg.get("weather") in ("off", "c", "f") else "off"
     st.alerts = [a for a in cfg.get("alerts", []) if isinstance(a, dict) and a.get("kind") in ("time", "open", "close")]
     return st

@@ -53,6 +53,13 @@ def test_once_renders_a_frame_of_the_requested_size(tmp_path):
     assert "14:30:00 UTC" in ANSI.sub("", r.stdout)
 
 
+def test_night_shade_option_shades_the_map(tmp_path):
+    env = {"XDG_CONFIG_HOME": str(tmp_path)}
+    flat = run("--once", "--size", "120x40", "--at", AT, env=env).stdout
+    shaded = run("--once", "--size", "120x40", "--at", AT, "--night-shade", "0.5", env=env).stdout
+    assert shaded != flat and ANSI.sub("", shaded) == ANSI.sub("", flat)      # same text, different colours
+
+
 def test_session_zones_and_labels_do_not_touch_the_config(tmp_path):
     env = {"XDG_CONFIG_HOME": str(tmp_path)}
     r = run("--once", "--size", "120x30", "--at", AT, "Europe/Berlin", "Home=America/Chicago", env=env)

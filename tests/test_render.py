@@ -151,7 +151,20 @@ def test_every_theme_renders(state, now, theme):
     apply_theme(theme)
     cv = compose(120, 40, state, now, now)
     assert len(cv.lines()) == 40
-    assert cv.st[5][5][1] == C.BG and C.name == theme
+    assert cv.st[38][100][1] == C.BG and C.name == theme       # a cell outside the map keeps the plain background
+
+
+def test_map_is_shaded_on_the_night_side_when_asked(state, now):
+    flat = compose(120, 40, state, now, now)
+    x0, y0, mw, mh = flat.meta["map"][:4]
+    assert len({flat.st[y0 + mh // 2][x][1] for x in range(x0, x0 + mw)}) == 1     # off by default: one background
+    state.night_shade = 0.5
+    cv = compose(120, 40, state, now, now)
+    x0, y0, mw, mh = cv.meta["map"][:4]
+    row = [cv.st[y0 + mh // 2][x][1] for x in range(x0, x0 + mw)]
+    assert len(set(row)) > 1                                    # not one flat background
+    lum = [0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] for c in row]
+    assert max(lum) - min(lum) > 4                              # day and night backgrounds differ visibly
 
 
 def has_map(lines):

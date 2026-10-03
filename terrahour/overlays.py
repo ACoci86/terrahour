@@ -98,6 +98,7 @@ HELP_R = [
     ("A", "alerts (bell + popup)"),
     ("W", "weather off / °C / °F"),
     ("T", "next theme"),
+    ("N", "night shade on the map"),
     ("c", "compact layout on / off / auto"),
     ("V", "ambient screensaver view"),
     ("t", "12h / 24h clock"),

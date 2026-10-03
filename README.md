@@ -16,8 +16,8 @@ timeline that shows when your cities are at work.
 ## What it does
 
 * **Map with day and night.** The world is drawn in braille dots, shaded by sunlight, and
-  coloured by time zone. Every city you track gets a marker. Zoom with `+` `-` or the mouse
-  wheel, drag to pan.
+  coloured by time zone. `N` adds a shade over the night side of the map, in four strengths.
+  Every city you track gets a marker. Zoom with `+` `-` or the mouse wheel, drag to pan.
 * **A timeline per city.** Each row is a 24-hour bar with the working hours lit up. The
   overlap row at the bottom shows the window when everybody is at their desk.
 * **Scrub through time.** Arrow keys move in 15-minute steps, `g` jumps to any time
@@ -35,7 +35,8 @@ timeline that shows when your cities are at work.
   through your cities. Nice on a spare monitor.
 * **Fits anywhere.** Below about 76 columns it switches to a compact layout that works in a
   tmux split. `--line` prints a one-liner for a status bar.
-* **Six themes** (midnight, nord, dracula, light, mono, colorblind), 12 or 24 hour clock,
+* **Fourteen themes** (midnight, nord, dracula, light, gruvbox, gruvbox-light, mono, green,
+  amber, grey, paper, vaporwave, synthwave, colorblind), 12 or 24 hour clock,
   mouse support, and about 12,000 cities built in with online lookup for the rest.
 
 | Exchanges | Compact layout for a tmux split |
@@ -108,6 +109,7 @@ terrahour Europe/Berlin "Home=America/Chicago" Naples   # a one-off set of zones
 terrahour --markets                        # start in the exchange view
 terrahour --at 2026-10-05T09:00Z           # start frozen at a given time
 terrahour --theme nord --12h
+terrahour --night-shade 0.5                # shade the night side of the map (0 to 1)
 terrahour --ambient                        # straight into the screensaver view
 terrahour --reset                          # forget saved cities and settings
 ```
@@ -124,7 +126,7 @@ Press `?` inside the app for the full list of keys. The ones you will use most:
 | `Enter` | focus the selected city, dims the others |
 | `M` `D` `A` `W` | exchanges, DST radar, alerts, weather |
 | `+` `-` `[` `]` `0` | zoom the map, zoom the timeline, reset |
-| `T` `t` `c` `V` | theme, 12/24h, compact layout, ambient view |
+| `T` `t` `c` `V` `N` | theme, 12/24h, compact layout, ambient view, night shade |
 | `q` | quit |
 
 Everything you change in the app (cities, theme, home, working hours, alerts) is saved to

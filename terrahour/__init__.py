@@ -3,4 +3,4 @@
 Pure standard library (Python 3.9+). Needs a truecolor terminal and a UTF-8 locale.
 """
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"

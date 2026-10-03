@@ -8,6 +8,7 @@ from . import geocode
 from .alerts import parse_alert
 from .ambient import amb_entries, amb_featured
 from .clock import TSPANS, parse_goto
+from .draw import NIGHT_SHADES
 from .places import make_city, refresh_results
 from .state import WORK_PRESETS
 from .themes import C, THEME_ORDER, apply_theme
@@ -228,6 +229,11 @@ def handle_key(st, k, live, now):
     elif k == "0":
         st.mzi, st.tsi, st.mcenter = 0, 0, None
         st.say("Zoom reset", C.TEXT)
+    elif k == "N":
+        nxt = [v for v in NIGHT_SHADES if v > st.night_shade + 1e-6]
+        st.night_shade = nxt[0] if nxt else NIGHT_SHADES[0]
+        st.save()
+        st.say("Night shade: " + ("off" if st.night_shade == 0 else "%d%%" % round(st.night_shade * 100)), C.TEXT)
     elif k == "Z":
         st.wheel = "scrub" if st.wheel == "zoom" else "zoom"
         st.save()

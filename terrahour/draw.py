@@ -11,6 +11,23 @@ from .weather import weather_cell
 from .worldmap import ZOOMS, land_cells, map_view
 
 
+NIGHT_K = 0.30          # how much of the zone colour land keeps at night
+NIGHT_SHADES = [0.0, 0.25, 0.5, 0.75, 1.0]       # the N key steps through these; 0 switches the shade off
+NIGHT_RANGE = 80        # at full strength, day and night backgrounds differ by this much per channel
+
+
+def map_backgrounds(strength):
+    """(day, night) map backgrounds.  Night is darker than the theme background by a fixed amount; when
+    the background is already too dark to go down that far (black themes), the day side is lifted instead."""
+    delta = int(round(strength * NIGHT_RANGE))
+    room = min(C.BG)
+    down = min(delta, room)
+    up = delta - down
+    night = tuple(v - down for v in C.BG)
+    day = tuple(min(255, v + up) for v in C.BG)
+    return day, night
+
+
 LABEL_FULL_H = 20       # map rows from which city labels carry the zone line too
 LABEL_NAMES_H = 12      # map rows from which every city is named; below, only the selected one
 
@@ -81,17 +98,31 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
     decl, eot = sun_pos(now)
     utc_h = now.hour + now.minute / 60 + now.second / 3600
     anchors = [(i, (info[1].total_seconds() / 3600) * 15) for i, info in enumerate(infos)]
+    day_bg, night_bg = map_backgrounds(st.night_shade)
     for r in range(mh):
         lat = ltop - (r + 0.5) * lspan / mh
         for c in range(mw):
-            if not grid[r][c]:
-                continue
             lon = ((clon + ((c + 0.5) / mw - 0.5) * lonspan + 180) % 360) - 180
+            d = daylight(lat, lon, utc_h, decl, eot)
+            bg = mix(night_bg, day_bg, d)       # the night side is shaded, sea included
+            if c == 0:                           # the shade runs on into the margins beside the map
+                cv.fill(0, y0 + r, x0, bg)
+            elif c == mw - 1:
+                cv.fill(x0 + mw, y0 + r, W - x0 - mw, bg)
+            if not grid[r][c]:
+                cv.put(x0 + c, y0 + r, " ", None, bg)
+                continue
             best = min(anchors, key=lambda a: min(abs(lon - a[1]), 360 - abs(lon - a[1])))[0]
-            f = 0.30 + 0.70 * daylight(lat, lon, utc_h, decl, eot)
+            f = NIGHT_K + (1 - NIGHT_K) * d
             if focus and best != sel:
                 f *= 0.45
-            cv.put(x0 + c, y0 + r, chr(0x2800 + grid[r][c]), mix(C.BG, rows[best].color, f))
+            cv.put(x0 + c, y0 + r, chr(0x2800 + grid[r][c]), mix(bg, rows[best].color, f), bg)
+
+    def over(x, y, text, fg=None, bold=False):
+        """Write on the map keeping each cell's own background, so labels do not punch holes in the shade."""
+        for i, ch in enumerate(text):
+            if 0 <= y < cv.h and 0 <= x + i < cv.w:
+                cv.put(x + i, y, ch, fg, cv.st[y][x + i][1], bold)
 
     def locate(lat, lon):
         fx = 0.5 + (((lon - clon + 180) % 360) - 180) / lonspan
@@ -103,9 +134,9 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
     slon = (-15 * (utc_h + eot / 60 - 12) + 180) % 360 - 180
     p = locate(math.degrees(decl), slon)
     if p:
-        cv.put(p[0], p[1], "☼", C.SUN, None, True)
+        over(p[0], p[1], "☼", C.SUN, True)
     if ZOOMS[st.mzi] > 1 and not st.ambient:
-        cv.put(x0 + 1, y0, "zoom %d×  ·  drag to pan  ·  0 resets" % ZOOMS[st.mzi], C.DIM)
+        over(x0 + 1, y0, "zoom %d×  ·  drag to pan  ·  0 resets" % ZOOMS[st.mzi], C.DIM)
     pts = [locate(ci.lat, ci.lon) for ci in rows]
     placed, chosen_by = [], {}
     for i in sorted(range(len(rows)), key=lambda i: (i != sel, i)):
@@ -155,14 +186,14 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
             lx, ly, w, sub = chosen_by[i]
             hit = (lx - 1, ly, lx + w + 1, ly + (2 if sub else 1))
             for yy in range(ly, hit[3]):
-                cv.put(lx - 1, yy, " " * (w + 2))
-            cv.put(lx, ly, ci.name, col, None, True)
+                over(lx - 1, yy, " " * (w + 2))
+            over(lx, ly, ci.name, col, True)
             if sub:
-                cv.put(lx, ly + 1, sub, mix(C.BG, ci.color, 0.35 if dimmed else 0.75))
+                over(lx, ly + 1, sub, mix(cv.st[y][x][1], ci.color, 0.35 if dimmed else 0.75))
         cv.meta["markers"].append((i, x, y, hit))
         dots.append((x, y, "◉" if is_sel else "●", C.WHITE if is_sel else col))
     for x, y, ch, col in dots:             # dots last, so no label can cover one
-        cv.put(x, y, ch, col, None, True)
+        over(x, y, ch, col, True)
 
 
 def layout(W, weather_on):
@@ -335,7 +366,9 @@ def draw_table(cv, W, y0, vis, top, infos, rows, sel, st, now):
     cv.put(lx + 4, ly, now.strftime("%H:%M"), C.WHITE, None, True)
 
 
-def draw_details(cv, W, y, st, infos, rows, sel, now):
+def detail_groups(st, infos, rows, sel, now):
+    """What there is to say about the selected city, most important first. Each group is a list of
+    (text, colour[, bold]) segments; the sun group is returned separately so a caller can shorten it."""
     ci = rows[sel]
     loc, off, abbr = infos[sel]
     groups = [[("▸ ", ci.color), (ci.name, ci.color, True), ("  " + ci.zone, C.DIM)]]
@@ -372,6 +405,13 @@ def draw_details(cv, W, y, st, infos, rows, sel, now):
                                                                g[0].astimezone(st.home_tz() or ci.tz).strftime("%d %b")), C.AMBER)])
     groups.append([("%.1f°%s %.1f°%s" % (abs(ci.lat), "N" if ci.lat >= 0 else "S",
                                                   abs(ci.lon), "E" if ci.lon >= 0 else "W"), C.DIM)])
+    return groups, sun
+
+
+def draw_details(cv, W, y, st, infos, rows, sel, now):
+    """The one-line summary of the selected city, trimmed at whole items to fit the width."""
+    groups, sun = detail_groups(st, infos, rows, sel, now)
+
     def width(gs):
         return sum(len(seg[0]) for g in gs for seg in g) + 5 * (len(gs) - 1)
     while len(groups) > 3 and width(groups) > W - 4:
