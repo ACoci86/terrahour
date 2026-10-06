@@ -74,7 +74,7 @@ def notify(text):
             subprocess.Popen(["osascript", "-e", 'display notification "%s" with title "terrahour"' % text.replace('"', "'")],
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         elif shutil.which("notify-send"):
-            subprocess.Popen(["notify-send", "terrahour", text], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(["notify-send", "--", "terrahour", text], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
 
