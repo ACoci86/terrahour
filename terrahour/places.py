@@ -7,7 +7,7 @@ import sys
 from importlib import resources
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from .geocode import GEO_CACHE, _ascii
+from .geocode import GEO_CACHE, _ascii, _clean
 from .themes import C
 
 
@@ -193,7 +193,7 @@ class City:
     """A row in the table: a city (working hours) or an exchange (explicit sessions)."""
 
     def __init__(self, name, zone, lat, lon, cidx, sessions=None, weekdays=False):
-        self.name, self.zone, self.lat, self.lon, self.cidx = name, zone, lat, lon, int(cidx)
+        self.name, self.zone, self.lat, self.lon, self.cidx = _clean(name), zone, lat, lon, int(cidx)
         self.sessions = tuple(sessions) if sessions else None
         self.weekdays = weekdays
         self.tz = ZoneInfo(zone)
