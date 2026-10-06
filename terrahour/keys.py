@@ -15,6 +15,9 @@ from .themes import C, THEME_ORDER, apply_theme
 from .worldmap import ZOOMS, zoom_map
 
 
+BUF_MAX = 200          # longest sane input-box entry (city names and goto/alert specs are short)
+
+
 def goto_tz(st):
     if st.home:
         try:
@@ -107,7 +110,8 @@ def handle_key(st, k, live, now):
                     st.mode = "alerts"
             return False
         elif len(k) == 1 and k >= " " and k != "\x7f":
-            st.buf += k
+            if len(st.buf) < BUF_MAX:
+                st.buf += k
             st.err = ""
         if st.mode == "add":
             geocode.ensure_geo(st.buf)

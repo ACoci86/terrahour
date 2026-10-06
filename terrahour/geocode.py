@@ -49,8 +49,12 @@ def _geo_fetch(q):
             res.append({"name": _ascii(r["name"]), "zone": tz, "lat": float(r["latitude"]), "lon": float(r["longitude"]),
                         "country": ctry, "pop": int(r.get("population") or 0), "online": True})
         GEO_CACHE[q] = ("ok", res)
+        if len(GEO_CACHE) > 500:
+            GEO_CACHE.clear()
     except Exception as e:
         GEO_CACHE[q] = ("err", (str(getattr(e, "reason", e)) or type(e).__name__)[:40])
+        if len(GEO_CACHE) > 500:
+            GEO_CACHE.clear()
     finally:
         _geo_pending.discard(q)
 
