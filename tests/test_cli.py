@@ -87,3 +87,13 @@ def test_reset(tmp_path):
 def test_interactive_mode_refuses_a_pipe(tmp_path):
     r = run(env={"XDG_CONFIG_HOME": str(tmp_path)})
     assert r.returncode != 0 and "needs an interactive terminal" in r.stderr
+
+
+def test_bad_size_and_at_are_usage_errors(tmp_path):
+    env = {"XDG_CONFIG_HOME": str(tmp_path)}
+    r = run("--once", "--size", "garbage", env=env)
+    assert r.returncode == 2 and "--size" in r.stderr and "Traceback" not in r.stderr
+    r = run("--once", "--size", "99999x99999", env=env)
+    assert r.returncode == 2 and "--size" in r.stderr
+    r = run("--at", "garbage", "--json", env=env)
+    assert r.returncode == 2 and "--at" in r.stderr and "Traceback" not in r.stderr
