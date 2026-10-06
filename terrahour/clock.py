@@ -23,8 +23,11 @@ def parse_goto(text, tz0, now):
         return None, ""
     m = re.fullmatch(r"([+-])\s*(\d+(?:\.\d+)?)\s*([hmd]?)", s)
     if m:
-        v = float(m.group(2)) * {"h": 3600, "m": 60, "d": 86400, "": 3600}[m.group(3)]
-        return now + dt.timedelta(seconds=v if m.group(1) == "+" else -v), ""
+        try:
+            v = float(m.group(2)) * {"h": 3600, "m": 60, "d": 86400, "": 3600}[m.group(3)]
+            return now + dt.timedelta(seconds=v if m.group(1) == "+" else -v), ""
+        except (OverflowError, ValueError):
+            return None, "That is too far away."
     m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})[ t](\d{1,2}):(\d{2})\s*(z|utc)?", s)
     if m:
         y, mo, d, hh, mm = (int(m.group(i)) for i in range(1, 6))
