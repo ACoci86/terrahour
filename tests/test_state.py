@@ -96,3 +96,17 @@ def test_say_sets_a_timed_message(state):
     state.say("hello")
     text, colour, until = state.msg
     assert text == "hello" and colour == C.TEXT and until > 0
+def test_bad_coordinates_in_config_fall_back_to_zone_lookup():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    for bad in ("x", None, float("inf"), float("nan"), 1e308, 999.0):
+        with open(p, "w") as f:
+            json.dump({"cities": [{"name": "Evil", "zone": "Europe/Berlin",
+                                   "lat": bad, "lon": 14.0, "cidx": 0}]}, f)
+        (c,) = state_from_config().cities
+        assert -90.0 <= c.lat <= 90.0 and -180.0 <= c.lon <= 180.0
+    with open(p, "w") as f:
+        json.dump({"cities": [{"name": "Evil", "zone": "Europe/Berlin",
+                               "lat": 45.0, "lon": 14.0, "cidx": 0}]}, f)
+    (c,) = state_from_config().cities
+    assert (c.lat, c.lon) == (45.0, 14.0)

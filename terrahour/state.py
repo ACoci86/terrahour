@@ -1,11 +1,12 @@
 """Application state and the on-disk config file (~/.config/terrahour/config.json)."""
 import json
+import math
 import os
 import time
 from zoneinfo import ZoneInfo
 
 from .clock import local_zone
-from .places import City, default_cities, markets
+from .places import City, default_cities, make_city, markets
 from .themes import C, THEMES, apply_theme
 
 
@@ -104,6 +105,15 @@ class State:
         self.msg = (text, color or C.TEXT, time.time() + secs)
 
 
+def _coord(v, lo, hi):
+    """A config coordinate as a finite float in range, else None."""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return f if math.isfinite(f) and lo <= f <= hi else None
+
+
 def state_from_config():
     st = State()
     cfg = load_config()
@@ -115,7 +125,13 @@ def state_from_config():
                 col = tuple(c.get("color", ()))
                 base = THEMES["midnight"]["PALETTE"]
                 cidx = base.index(col) if col in base else i
-            st.cities.append(City(c["name"], c["zone"], c["lat"], c["lon"], cidx))
+            lat, lon = _coord(c.get("lat"), -90.0, 90.0), _coord(c.get("lon"), -180.0, 180.0)
+            if lat is None or lon is None:
+                fb = make_city({"name": c.get("name", "?"), "zone": c["zone"],
+                                "lat": None, "lon": None}, st.cities)
+                lat = lat if lat is not None else fb.lat
+                lon = lon if lon is not None else fb.lon
+            st.cities.append(City(c["name"], c["zone"], lat, lon, cidx))
     except Exception:
         st.cities = []
     if not st.cities:
