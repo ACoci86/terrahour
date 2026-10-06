@@ -107,7 +107,8 @@ class State:
 def state_from_config():
     st = State()
     cfg = load_config()
-    apply_theme(cfg.get("theme", "midnight"))
+    th = cfg.get("theme", "midnight")
+    apply_theme(th if isinstance(th, str) else "midnight")
     try:
         for i, c in enumerate(cfg.get("cities", [])):
             cidx = c.get("cidx")

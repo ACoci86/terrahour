@@ -96,3 +96,11 @@ def test_say_sets_a_timed_message(state):
     state.say("hello")
     text, colour, until = state.msg
     assert text == "hello" and colour == C.TEXT and until > 0
+def test_non_string_theme_in_config_falls_back_to_midnight():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    for bad in ({}, [], 5, None):
+        with open(p, "w") as f:
+            json.dump({"theme": bad}, f)
+        st = state_from_config()
+        assert C.name == "midnight" and len(st.cities) == 9
