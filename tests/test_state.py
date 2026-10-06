@@ -96,3 +96,15 @@ def test_say_sets_a_timed_message(state):
     state.say("hello")
     text, colour, until = state.msg
     assert text == "hello" and colour == C.TEXT and until > 0
+def test_malformed_alerts_in_config_are_dropped():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    good = {"kind": "time", "name": "Rome", "zone": "Europe/Rome", "m": 540}
+    bad = [{"kind": "time", "name": "x", "zone": "UTC", "m": "09:00"},
+           {"kind": "time", "name": "x", "zone": "UTC"},
+           {"kind": "time", "name": "x", "zone": "UTC", "m": 9999},
+           {"kind": "open", "name": 123, "zone": "UTC"},
+           {"kind": "bogus"}, "junk"]
+    with open(p, "w") as f:
+        json.dump({"alerts": [good] + bad}, f)
+    assert state_from_config().alerts == [good]
