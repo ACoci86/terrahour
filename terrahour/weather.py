@@ -1,5 +1,6 @@
 """Optional current weather from Open-Meteo (needs network, off by default)."""
 import json
+import math
 import threading
 import time
 import urllib.request
@@ -32,7 +33,10 @@ def _fetch_weather_batch(keys):
             items = data if isinstance(data, list) else [data]
             for k, it in zip(chunk, items):
                 cur = it["current"]
-                WEATHER[k] = {"t": float(cur["temperature_2m"]), "code": int(cur["weather_code"]), "ts": time.time()}
+                t = float(cur["temperature_2m"])
+                if not math.isfinite(t):
+                    raise ValueError("non-finite temperature")
+                WEATHER[k] = {"t": t, "code": int(cur["weather_code"]), "ts": time.time()}
         W_STATE.update(err=None, fails=0, next=time.time() + W_MIN_GAP)
     except Exception as e:
         fails = W_STATE["fails"] + 1
