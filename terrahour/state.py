@@ -123,7 +123,13 @@ def state_from_config():
     st.h12 = bool(cfg.get("h12", False))
     w = cfg.get("work")
     if isinstance(w, list) and len(w) == 2:
-        st.work = (int(w[0]), int(w[1]))
+        try:
+            h1, h2 = int(w[0]), int(w[1])
+        except (TypeError, ValueError, OverflowError):
+            pass
+        else:
+            if 0 <= h1 <= 24 and 0 <= h2 <= 24:
+                st.work = (h1, h2)
     st.overlap = bool(cfg.get("overlap", True))
     h = cfg.get("home")
     if isinstance(h, dict) and h.get("zone"):

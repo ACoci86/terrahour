@@ -96,3 +96,13 @@ def test_say_sets_a_timed_message(state):
     state.say("hello")
     text, colour, until = state.msg
     assert text == "hello" and colour == C.TEXT and until > 0
+def test_malformed_work_pair_in_config_falls_back_to_default():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    for bad in (["9", "a"], [["x"], 5], [25, 5], "9-17", [9]):
+        with open(p, "w") as f:
+            json.dump({"work": bad}, f)
+        assert state_from_config().work == (9, 17)
+    with open(p, "w") as f:
+        json.dump({"work": [8, 18]}, f)
+    assert state_from_config().work == (8, 18)
