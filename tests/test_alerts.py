@@ -84,5 +84,6 @@ def test_notify_passes_option_terminator_before_alert_text(monkeypatch):
         pass
     monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: calls.append(a) or _P())
     monkeypatch.setattr("shutil.which", lambda *a: "/bin/notify-send")
+    monkeypatch.setattr("sys.platform", "linux")                 # macOS goes through osascript instead
     alerts.notify("-u is open")
     assert calls and calls[0][0][:2] == ["notify-send", "--"]
