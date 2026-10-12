@@ -2,8 +2,8 @@
 
 ![tests](https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg)
 
-A world clock for the terminal, with a map that shows where it is daytime and a 24-hour
-timeline that shows when your cities are at work.
+A world clock for the terminal. A map shows where it is day and where it is night, and a
+24-hour timeline shows when the people in your cities are at work.
 
 | Main view: the day and night map above a timeline per city |
 | --- |
@@ -15,13 +15,13 @@ timeline that shows when your cities are at work.
 
 ## What it does
 
-* **Map with day and night.** The world is drawn in braille dots, shaded by sunlight, and
-  coloured by time zone. `N` adds a shade over the night side of the map, in four strengths.
-  Every city you track gets a marker. Zoom with `+` `-` or the mouse wheel, drag to pan.
-* **A timeline per city.** Each row is a 24-hour bar with the working hours lit up. The
-  overlap row at the bottom shows the window when everybody is at their desk.
+* **A map with day and night.** Braille dots, shaded by sunlight and coloured by time zone,
+  with a marker for every city you track. Zoom with `+` `-` or the mouse wheel, drag to
+  pan. `N` adds a shade over the night side.
+* **A timeline per city.** A 24-hour bar with the working hours lit up, and an overlap row
+  that shows when everybody is at their desk.
 * **Scrub through time.** Arrow keys move in 15-minute steps, `g` jumps to any time
-  ("15:30", "3pm", "+2h", "2026-10-05 09:00"), `r` snaps back to live.
+  ("15:30", "3pm", "+2h", "2026-10-05 09:00"), `r` goes back to live.
 * **DST radar.** `D` lists the next clock change for every city and, more usefully, whether
   the gap between you and them is about to shift by an hour.
 * **Stock exchanges.** `M` swaps the city list for the ten biggest exchanges with their real
@@ -32,12 +32,13 @@ timeline that shows when your cities are at work.
 * **Weather**, if you want it. `W` shows the current temperature next to each city
   (Open-Meteo, needs network, off by default).
 * **Ambient view.** `V` turns the whole terminal into a big clock over the map that cycles
-  through your cities. Nice on a spare monitor.
-* **Fits anywhere.** Below about 76 columns it switches to a compact layout that works in a
-  tmux split. `--line` prints a one-liner for a status bar.
-* **Fourteen themes** (midnight, nord, dracula, light, gruvbox, gruvbox-light, mono, green,
-  amber, grey, paper, vaporwave, synthwave, colorblind), 12 or 24 hour clock,
-  mouse support, and about 12,000 cities built in with online lookup for the rest.
+  through your cities. Nice on a spare monitor. Press `g` there and type a time, say 09:00:
+  the map then keeps the place where it is 09:00 right now in the centre, so it slowly
+  turns through the day.
+* **Fits anywhere.** Narrow windows get a compact layout that works in a tmux split, and
+  `--line` prints a one-liner for a status bar.
+* **Fourteen themes**, a 12 or 24 hour clock, mouse support, and about 12,000 cities built
+  in with online lookup for the rest.
 
 | Exchanges | Compact layout for a tmux split |
 | --- | --- |
@@ -53,86 +54,63 @@ timeline that shows when your cities are at work.
 
 ## Install
 
-You need Python 3.9 or newer, a terminal with truecolor support (almost all of them these
-days) and a UTF-8 locale. Developed on Linux. macOS is covered by the automated tests, but I
-have not tried it by hand. On Windows use WSL, the app relies on a Unix terminal.
+It runs on Linux and macOS, in any terminal with truecolor and a UTF-8 locale (that is
+almost all of them). On Windows use WSL.
 
-The simplest way is [pipx](https://pipx.pypa.io/), which installs the `terrahour` command for
-your user:
+**With pipx** (recommended; it installs the `terrahour` command for your user):
 
 ```sh
 pipx install terrahour
 terrahour
 ```
 
-If you do not have pipx, get it with `sudo apt install pipx` on Debian and Ubuntu or
-`brew install pipx` on macOS. If your shell cannot find `terrahour` afterwards, run
-`pipx ensurepath` once and open a new terminal.
+No pipx yet? `sudo apt install pipx` on Debian and Ubuntu, `brew install pipx` on macOS.
+If the shell cannot find `terrahour` afterwards, run `pipx ensurepath` once and open a new
+terminal. Later, `pipx upgrade terrahour` gets you the newest version.
 
-**To try it without installing anything:** `pipx run terrahour` or `uvx terrahour`.
-
-**With pip, in a virtual environment.** Recent Debian and Ubuntu refuse a plain `pip install`
-outside one. The command is then available whenever that environment is active:
-
-```sh
-python3 -m venv .venv && . .venv/bin/activate
-pip install terrahour
-terrahour
-```
-
-**Without Python at all.** Every [release](https://github.com/ACoci86/terrahour/releases)
-has a single-file executable for Linux (x86_64 and ARM64) and macOS (Apple Silicon and Intel).
-Download the one for your machine, make it executable and run it:
+**Without Python.** Every [release](https://github.com/ACoci86/terrahour/releases) has a
+single-file executable for Linux (x86_64, ARM64) and macOS (Apple Silicon, Intel). Download
+the one for your machine, then:
 
 ```sh
 chmod +x terrahour-linux-x86_64
 ./terrahour-linux-x86_64
 ```
 
-On macOS the first start is blocked because the file is not signed: run
-`xattr -d com.apple.quarantine terrahour-macos-arm64` once, or right-click it and choose Open.
+On a Mac the first start is blocked because the file is not signed by Apple. Run
+`xattr -d com.apple.quarantine terrahour-macos-arm64` once, or right-click the file and
+choose Open.
 
-**From a clone.** There is nothing to build, so you can run it in place:
-
-```sh
-git clone https://github.com/ACoci86/terrahour
-cd terrahour
-python3 -m terrahour
-```
-
-### Updating
-
-```sh
-pipx upgrade terrahour
-```
-
-If you installed with pip, run `pip install --upgrade terrahour` in the same environment. In
-a clone, `git pull`. `terrahour --version` tells you which version you have.
+**Other ways.** `pipx run terrahour` or `uvx terrahour` runs it without installing.
+`pip install terrahour` works inside a virtual environment (recent Debian and Ubuntu refuse
+it outside one). And a clone runs in place with `python3 -m terrahour`; there is nothing to
+build.
 
 ## Usage
 
-Run `terrahour`. The first time it starts with a default set of cities: press `a` to add your
-own, `d` to remove one, `*` to mark the selected city as home, `?` for every key and `q` to
-quit.
+Run `terrahour`. The first time it starts with a default set of cities: press `a` to add
+your own, `d` to remove one, `*` to mark the selected city as home, `?` for every key and
+`q` to quit.
 
 ```sh
-terrahour                                  # your saved cities (a sensible default set the first time)
+terrahour                                  # your saved cities
 terrahour Europe/Berlin "Home=America/Chicago" Naples   # a one-off set of zones or city names, not saved
 terrahour --markets                        # start in the exchange view
 terrahour --at 2026-10-05T09:00Z           # start frozen at a given time
 terrahour --theme nord --12h
 terrahour --night-shade 0.5                # shade the night side of the map (0 to 1)
 terrahour --ambient                        # straight into the screensaver view
+terrahour --ambient --follow 09:00         # ...with the map following where it is 9 in the morning
 terrahour --reset                          # forget saved cities and settings
 ```
 
-Press `?` inside the app for the full list of keys. The ones you will use most:
+The keys you will use most:
 
 | Key | Action |
 | --- | --- |
 | `←` `→` | scrub 15 minutes (Shift: 1 hour, PgUp/PgDn: 1 day) |
 | `g` | go to a time, `r` back to live |
-| `↑` `↓` `j` `k` | select a city, Shift moves it up or down the list |
+| `↑` `↓` `j` `k` | select a city; capital `K` `J` move it up or down the list |
 | `a` `d` | add or remove a city |
 | `*` | mark the selected city as home (offsets are then relative to it) |
 | `Enter` | focus the selected city, dims the others |
@@ -141,13 +119,10 @@ Press `?` inside the app for the full list of keys. The ones you will use most:
 | `T` `t` `c` `V` `N` | theme, 12/24h, compact layout, ambient view, night shade |
 | `q` | quit |
 
-Everything you change in the app (cities, theme, home, working hours, alerts) is saved to
-`~/.config/terrahour/config.json`. Zones given on the command line are session-only and
-leave that file alone.
+Everything you change in the app is saved to `~/.config/terrahour/config.json`. Zones
+given on the command line are for that session only.
 
-## Window size
-
-What you see depends on the size of your terminal window:
+### Window size
 
 | Your window | What you see |
 | --- | --- |
@@ -155,8 +130,8 @@ What you see depends on the size of your terminal window:
 | Wide enough, but only 16 to 20 rows tall | The city table on its own, because the map would not fit |
 | Narrower than 76 columns, or shorter than 16 rows | The compact layout: one line per city with a small timeline, no map |
 
-On a small map only the selected city is named, so the dots stay readable. Press `c` if you
-want to force the compact layout, or to go back.
+On a small map only the selected city is named, so the dots stay readable. `c` forces the
+compact layout, or goes back.
 
 ## Status bars and scripts
 
@@ -169,62 +144,25 @@ $ terrahour --tmux             # with tmux colour codes, for your status-right
 $ terrahour --json --at 2026-03-18T14:30Z | jq '.cities[] | select(.open)'
 ```
 
-The JSON includes local time, UTC offset, whether the city is inside working hours, minutes
-until that changes, and the next clock change. `--once --size 120x40` prints a single frame of
-the full UI, which is how the screenshots above were made.
+The JSON has each city's local time, UTC offset, whether it is inside working hours, minutes
+until that changes, and the next clock change. `--once --size 120x40` prints a single frame
+of the full screen, which is how the screenshots above were made.
 
 ## Network
 
-Two features talk to the internet, and both are optional:
+Two features talk to the internet, and both are optional: the online lookup of city names
+that are not in the built-in list, and the weather. Set `TERRAHOUR_OFFLINE=1` to switch
+both off. Nothing else leaves your machine.
 
-* While you type in the "add city" box, names that are not in the built-in list are looked up
-  through the Open-Meteo geocoding API.
-* Weather, when you turn it on with `W`, comes from the Open-Meteo forecast API.
-
-Set `TERRAHOUR_OFFLINE=1` to switch both off. Nothing else leaves your machine.
-
-## How it is put together
-
-It is a single Python package with no third-party dependencies. The pieces:
-
-| Module | What it does |
-| --- | --- |
-| `cli.py` | argument parsing and the non-interactive modes |
-| `app.py` | the terminal loop: raw mode, input tokens, redraw only the lines that changed |
-| `keys.py` | every key and mouse event ends up here |
-| `compose.py`, `draw.py`, `overlays.py`, `ambient.py` | turn the state into a frame |
-| `canvas.py` | a character grid with colours that renders to ANSI escapes |
-| `clock.py` | offsets, formatting, open/closed status, DST transitions, overlap |
-| `astro.py` | sun position, sunrise and sunset |
-| `worldmap.py` | the land mask, braille rasterisation, zoom and pan |
-| `places.py`, `geocode.py` | the city database, search, and the online lookup |
-| `state.py` | the State object and the config file |
-| `alerts.py`, `weather.py` | what the names say |
-| `themes.py` | colours; every module reads them through the active theme object `C` |
-| `data/` | the city list, the land mask and the exchange list, with [their own README](https://github.com/ACoci86/terrahour/blob/main/terrahour/data/README.md) |
-
-The map is a 0.25 degree land mask folded into a summed-area table, so any zoom level can ask
-"how much of this box is land?" in constant time, and the braille cells come straight out of
-that. Sun position uses the usual NOAA approximation, good to a few minutes.
-
-## Development
-
-```sh
-python3 -m venv .venv && . .venv/bin/activate
-pip install -e ".[dev]"
-pytest
-```
-
-The tests do not need a terminal or the network: they compose frames in memory and drive the
-app through the same key handler the terminal loop uses. `tools/screenshots.py` regenerates
-everything in `docs/` (it needs Pillow and the DejaVu fonts).
-
-## Data and credits
+## Credits
 
 * City list derived from [GeoNames](https://www.geonames.org/) (CC BY 4.0).
 * Land mask rasterised from [Natural Earth](https://www.naturalearthdata.com/) (public domain).
 * Geocoding and weather from [Open-Meteo](https://open-meteo.com/) (CC BY 4.0).
 * Time zone rules come from your operating system's tz database through Python's `zoneinfo`.
+* Several hardening fixes by [yourpwnguy](https://github.com/yourpwnguy).
+
+Want to change the code? See [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## License
 

@@ -75,6 +75,19 @@ def draw_goto(cv, W, H, st):
     cv.put(x + 3, y + h - 2, "Enter go   empty = back to live   Esc cancel", C.DIM, C.PANEL_BG)
 
 
+def draw_follow(cv, W, H, st):
+    w = min(68, W - 4)
+    h = 8
+    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    box(cv, x, y, w, h, "Follow a time of day")
+    input_line(cv, x + 3, y + 2, st.buf)
+    if st.err:
+        cv.put(x + 3, y + 3, st.err, C.RED, C.PANEL_BG)
+    cv.put(x + 3, y + 4, "09:00 or 9am: the place where it is that time now stays in the", C.DIM, C.PANEL_BG)
+    cv.put(x + 3, y + 5, "centre, so the map slowly turns through the day.", C.DIM, C.PANEL_BG)
+    cv.put(x + 3, y + h - 2, "Enter set   empty = stop following   Esc cancel", C.DIM, C.PANEL_BG)
+
+
 HELP_L = [
     ("← →", "scrub time 15 min"),
     ("Shift ← →", "scrub 1 hour"),
@@ -101,6 +114,7 @@ HELP_R = [
     ("N", "night shade on the map"),
     ("c", "compact layout on / off / auto"),
     ("V", "ambient screensaver view"),
+    ("g (ambient)", "map follows a time of day"),
     ("t", "12h / 24h clock"),
     ("click", "select a row or map city"),
     ("click bars", "jump to that time"),
@@ -240,6 +254,8 @@ def draw_overlays(cv, W, H, st, now):
         draw_add(cv, W, H, st, now)
     elif st.mode == "goto":
         draw_goto(cv, W, H, st)
+    elif st.mode == "follow":
+        draw_follow(cv, W, H, st)
     elif st.mode == "help":
         draw_help(cv, W, H)
     elif st.mode == "radar":

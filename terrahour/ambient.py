@@ -5,6 +5,7 @@ from .astro import daylight, sun_pos
 from .canvas import Canvas
 from .clock import fmt_clock, fmt_off, local_zone, utcnow
 from .draw import draw_map
+from .overlays import draw_overlays
 from .places import ABBR
 from .themes import C, mix
 
@@ -87,10 +88,17 @@ def compose_ambient(W, H, st, now, live_now):
     if use_map:
         mw = W
         dot = 360.0 / (mw * 2)
-        st.amb_clon = -(int(live_now.timestamp() / AMB_DRIFT) % (mw * 2)) * dot if st.amb_drift else 0.0
+        if st.amb_follow is not None:
+            st.amb_clon = follow_lon(st.amb_follow, now)
+        else:
+            st.amb_clon = -(int(live_now.timestamp() / AMB_DRIFT) % (mw * 2)) * dot if st.amb_drift else 0.0
         focus, st.focus = st.focus, False
         draw_map(cv, W, pad, mw, mh, infos, rows, fi, st, now, None)
         st.focus = focus
+        if st.amb_follow is not None:            # a small tag under the centre: that is where it is 09:00 now
+            tag = " %s here " % fmt_clock(now.replace(hour=int(st.amb_follow), minute=int(st.amb_follow % 1 * 60)), st.h12)
+            tx = max(0, (W - len(tag)) // 2)
+            cv.put(tx, pad + mh - 1, tag, C.BG, C.AMBER, True)
         y = pad + mh + 1
     else:
         y = pad
@@ -141,11 +149,18 @@ def compose_ambient(W, H, st, now, live_now):
         cv.put(sx, y + 7, name, ccol if feat else mix(C.BG, ccol, 0.55), None, feat)
         cv.put(sx + len(name) + 1, y + 7, t, C.WHITE if feat else C.DIM, None, feat)
         sx += len(name) + len(t) + 4
-    hint = "" if time.time() - st.amb_t0 > 6 else "V exit  ·  ← → city  ·  space auto  ·  m drift  ·  T theme  ·  q quit"
+    hint = "" if time.time() - st.amb_t0 > 6 else "V exit  ·  ← → city  ·  space auto  ·  m drift  ·  g follow a time  ·  T theme  ·  q quit"
     if hint and len(hint) < W - 2:
         cv.put(max(0, (W - len(hint)) // 2), y + 6, hint, mix(C.BG, C.DIM, 0.6))
     text, until = st.banner if st.banner else ("", 0)
     if text and time.time() < until:
         t = " %s " % text
         cv.put(max(0, (W - len(t)) // 2), 0, t, C.AMBER, C.SEL_BG, True)
+    draw_overlays(cv, W, H, st, now)
     return cv
+
+
+def follow_lon(hours, now):
+    """The longitude where the local clock reads ``hours`` right now (15 degrees per hour, west as time passes)."""
+    utc_h = now.hour + now.minute / 60 + now.second / 3600
+    return ((hours - utc_h) * 15 + 180) % 360 - 180

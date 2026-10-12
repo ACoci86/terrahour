@@ -187,6 +187,14 @@ class TestParseGoto:
         assert parse_goto("nonsense", self.tz, now)[1].startswith("Try ")
 
 
+def test_parse_hour_accepts_the_usual_spellings():
+    from terrahour.clock import parse_hour
+    assert parse_hour("9") == (9.0, "") and parse_hour("09:30") == (9.5, "") and parse_hour("9.30pm") == (21.5, "")
+    assert parse_hour("12am") == (0.0, "") and parse_hour("12 pm") == (12.0, "") and parse_hour("  ") == (None, "")
+    for bad in ("25:00", "9:60", "13pm", "noon"):
+        assert parse_hour(bad)[0] is None and parse_hour(bad)[1]
+
+
 def test_parse_goto_huge_relative_returns_an_error_instead_of_raising(now):
     import datetime as dt
     for text in ("+999999999d", "+" + "9" * 5000 + "h", "-999999999999999999999d"):

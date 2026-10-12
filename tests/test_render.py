@@ -119,6 +119,16 @@ def test_ambient_view(state, now):
     assert "█" in text and "V exit" in text and "San Francisco" in text
 
 
+def test_ambient_map_follows_a_time_of_day(state, now):
+    from terrahour.ambient import follow_lon
+    state.ambient, state.amb_t0, state.amb_follow = True, time.time(), 9.0
+    cv = compose(100, 30, state, now, now)            # 14:30 UTC: it is 09:00 at 82.5 degrees west
+    assert cv.meta["map"][4] == follow_lon(9.0, now) == -82.5
+    assert "09:00 here" in "\n".join(plain(cv))
+    later = now + dt.timedelta(hours=2)
+    assert follow_lon(9.0, later) == -112.5           # thirty degrees further west two hours on
+
+
 @pytest.mark.parametrize("mode,title", [("help", "Keys"), ("radar", "DST radar"), ("add", "Add city"),
                                         ("goto", "Go to time"), ("alerts", "Alerts"), ("alertnew", "New alert")])
 def test_overlays_render(state, now, mode, title):

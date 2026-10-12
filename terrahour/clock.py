@@ -16,6 +16,24 @@ def parse_at(s):
     return t.replace(tzinfo=dt.timezone.utc) if t.tzinfo is None else t.astimezone(dt.timezone.utc)
 
 
+def parse_hour(text):
+    """A time of day ("9", "09:30", "9am", "9.30pm") as hours since midnight, 0 <= h < 24; (None, "") for empty."""
+    s = text.strip().lower()
+    if not s:
+        return None, ""
+    m = re.fullmatch(r"(\d{1,2})(?:[:.]?(\d{2}))?\s*(am|pm)?", s)
+    if not m:
+        return None, "Try 09:00, 9am or 21:30."
+    hh, mm, ap = int(m.group(1)), int(m.group(2) or 0), m.group(3)
+    if ap:
+        if not 1 <= hh <= 12:
+            return None, "With am/pm the hour goes from 1 to 12."
+        hh = hh % 12 + (12 if ap == "pm" else 0)
+    if hh > 23 or mm > 59:
+        return None, "That isn't a valid time."
+    return hh + mm / 60, ""
+
+
 def parse_goto(text, tz0, now):
     """Return (aware UTC datetime | None for live, error string)."""
     s = text.strip().lower()

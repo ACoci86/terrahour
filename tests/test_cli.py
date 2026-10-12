@@ -60,6 +60,14 @@ def test_night_shade_option_shades_the_map(tmp_path):
     assert shaded != flat and ANSI.sub("", shaded) == ANSI.sub("", flat)      # same text, different colours
 
 
+def test_follow_option_is_validated(tmp_path):
+    env = {"XDG_CONFIG_HOME": str(tmp_path)}
+    r = run("--once", "--size", "100x30", "--ambient", "--follow", "9am", "--at", AT, env=env)
+    assert r.returncode == 0 and "09:00 here" in ANSI.sub("", r.stdout)
+    r = run("--once", "--ambient", "--follow", "25:00", "--at", AT, env=env)
+    assert r.returncode == 2 and "--follow" in r.stderr
+
+
 def test_session_zones_and_labels_do_not_touch_the_config(tmp_path):
     env = {"XDG_CONFIG_HOME": str(tmp_path)}
     r = run("--once", "--size", "120x30", "--at", AT, "Europe/Berlin", "Home=America/Chicago", env=env)

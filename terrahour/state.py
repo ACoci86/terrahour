@@ -62,6 +62,7 @@ class State:
         self.amb_pin = None         # featured city index; None = cycle automatically
         self.amb_clon = 0.0
         self.amb_drift = False      # slow sideways drift of the map (off by default)
+        self.amb_follow = None      # hours since midnight; the ambient map keeps where it is that time in the centre
         self.amb_t0 = 0.0           # when ambient mode was entered (hint shows briefly)
 
     # rows currently shown and the cursor on them
@@ -98,7 +99,7 @@ class State:
                     json.dump({"cities": [c.to_json() for c in self.cities], "h12": self.h12,
                                "work": list(self.work), "overlap": self.overlap, "theme": C.name,
                                "home": self.home, "weather": self.weather, "compact": self.compact,
-                               "wheel": self.wheel,
+                               "wheel": self.wheel, "amb_follow": self.amb_follow,
                                "night_shade": self.night_shade,
                                "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
                                           for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
@@ -169,6 +170,8 @@ def state_from_config():
             st.home = None
     st.compact = cfg.get("compact", "auto") if cfg.get("compact") in ("auto", "on", "off") else "auto"
     st.wheel = cfg.get("wheel", "zoom") if cfg.get("wheel") in ("zoom", "scrub") else "zoom"
+    f = cfg.get("amb_follow")
+    st.amb_follow = float(f) if isinstance(f, (int, float)) and not isinstance(f, bool) and 0 <= f < 24 else None
     try:
         st.night_shade = max(0.0, min(1.0, float(cfg.get("night_shade", 0.0))))
     except (TypeError, ValueError):

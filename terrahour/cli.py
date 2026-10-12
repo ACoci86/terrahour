@@ -7,7 +7,7 @@ import time
 
 from . import __version__
 from .app import run
-from .clock import parse_at, utcnow
+from .clock import parse_at, parse_hour, utcnow
 from .compose import compose
 from .output import json_output, line_output, watch
 from .places import cities_from_args
@@ -29,6 +29,7 @@ def main():
     ap.add_argument("--no-mouse", action="store_true", help="don't capture the mouse (keeps normal text selection)")
     ap.add_argument("--line", action="store_true", help="print one line, e.g. for a status bar, and exit")
     ap.add_argument("--ambient", action="store_true", help="start in the full-screen ambient (screensaver) view")
+    ap.add_argument("--follow", metavar="HH:MM", help="ambient view: keep the place where it is this time of day in the centre of the map")
     ap.add_argument("--compact", action="store_true", help="small-pane layout without the map")
     ap.add_argument("--watch", action="store_true", help="live one-liner that updates in place (tmux pane, status line)")
     ap.add_argument("--seconds", action="store_true", help="show seconds in --line / --watch")
@@ -60,6 +61,11 @@ def main():
     if args.ambient:
         st.ambient = True
         st.amb_t0 = time.time()
+    if args.follow is not None:
+        hours, err = parse_hour(args.follow)
+        if err:
+            ap.error("--follow: " + err)
+        st.amb_follow = hours
     st.mouse = not args.no_mouse
     try:
         at = parse_at(args.at) if args.at else None

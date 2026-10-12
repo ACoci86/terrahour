@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from . import geocode
 from .alerts import parse_alert
 from .ambient import amb_entries, amb_featured
-from .clock import TSPANS, parse_goto
+from .clock import TSPANS, parse_goto, parse_hour
 from .draw import NIGHT_SHADES
 from .places import make_city, refresh_results
 from .state import WORK_PRESETS
@@ -30,10 +30,32 @@ def goto_tz(st):
 def handle_key(st, k, live, now):
     """Mutates state; returns True to quit."""
     if st.ambient:
+        if st.mode == "follow":
+            if k in ("\x1b", "\x03"):
+                st.mode = None
+            elif k in ("\x7f", "\b"):
+                st.buf = st.buf[:-1]
+            elif k in ("\x15", "\x17"):
+                st.buf = ""
+            elif k in ("\r", "\n"):
+                hours, err = parse_hour(st.buf)
+                if err:
+                    st.err = err
+                else:
+                    st.amb_follow = hours
+                    st.mode = None
+                    st.save()
+            elif len(k) == 1 and k >= " " and k != "\x7f" and len(st.buf) < BUF_MAX:
+                st.buf += k
+                st.err = ""
+            return False
         n = len(amb_entries(st))
         cur = amb_featured(st, n, live)
         if k in ("\x03", "q", "Q"):
             return True
+        if k in ("g", "G"):
+            st.mode, st.buf, st.err = "follow", "", ""
+            return False
         if k in ("V", "v", "\x1b"):
             st.ambient = False
         elif k in ("\x1b[C", "l", "\x1b[B", "j"):

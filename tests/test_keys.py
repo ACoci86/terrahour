@@ -1,5 +1,6 @@
 """Drive the app through handle_key / handle_mouse exactly as the terminal loop would."""
 import datetime as dt
+import time
 
 from terrahour.ambient import amb_entries
 from terrahour.compose import compose
@@ -271,6 +272,23 @@ class TestMouse:
         state.mode = "help"
         handle_mouse(state, self.meta(state, now), 65, 0, 39, True, now, now)
         assert state.sel == 0
+
+
+def test_g_in_the_ambient_view_sets_the_time_to_follow(state, now):
+    state.ambient, state.amb_t0 = True, time.time()
+    press(state, ["g"], now)
+    assert state.mode == "follow"
+    type_text(state, "9am", now)
+    press(state, [ENTER], now)
+    assert state.mode is None and state.amb_follow == 9.0 and state.ambient
+    press(state, ["g"], now)
+    type_text(state, "nope", now)
+    press(state, [ENTER], now)
+    assert state.mode == "follow" and state.err
+    press(state, [ESC], now)
+    assert state.mode is None and state.amb_follow == 9.0
+    press(state, ["g", ENTER], now)                     # empty entry switches it off
+    assert state.amb_follow is None
 
 
 def test_input_box_buffer_is_capped(state, now):
