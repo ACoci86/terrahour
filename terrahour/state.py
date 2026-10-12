@@ -102,8 +102,8 @@ class State:
                                "night_shade": self.night_shade,
                                "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
                                           for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
-                    os.chmod(tmp, 0o600)
-                    os.replace(tmp, p)
+                os.chmod(tmp, 0o600)
+                os.replace(tmp, p)           # only once the file is closed, so it is complete
             except BaseException:
                 try:
                     os.unlink(tmp)
