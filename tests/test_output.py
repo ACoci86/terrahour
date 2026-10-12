@@ -51,3 +51,13 @@ def test_json_output(state, now):
                       "next_clock_change": "2026-03-29T01:00+00:00"}
     tokyo = next(c for c in data["cities"] if c["name"] == "Tokyo")
     assert tokyo["next_clock_change"] is None and tokyo["utc_offset_minutes"] == 540
+
+
+def test_control_characters_never_reach_terminal_output(state, now):
+    from terrahour.compose import compose
+    from terrahour.places import City
+    state.cities = [City("A\x1b]0;pwned\x07B", "Europe/Berlin", 45.0, 14.0, 0)]
+    assert "\x1b]0;" not in line_output(state, now, False, False)
+    cv = compose(120, 40, state, now, now)
+    flat = "".join("".join(row) for row in cv.ch)
+    assert "\x1b]0;pwned" not in flat

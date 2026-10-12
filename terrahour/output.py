@@ -6,11 +6,12 @@ import sys
 import time
 
 from .clock import fmt_clock, is_open, next_transition, parse_at, status_info, utcnow
+from .geocode import _clean
 from .themes import C, mix
 
 
 def short_label(name):
-    words = re.split(r"[\s/_-]+", name.strip())
+    words = re.split(r"[\s/_-]+", _clean(name).strip())
     if len(words) > 1:
         return "".join(w[0] for w in words if w).upper()[:4]
     return name[:3].upper()

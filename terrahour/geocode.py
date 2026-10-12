@@ -22,6 +22,12 @@ def _ascii(s):
     return out or s
 
 
+def _clean(s):
+    """Drop C0/C1 control characters and DEL: display text never needs them."""
+    return "".join(c for c in s if c >= " " and c != "\x7f"
+                   and not "\x80" <= c <= "\x9f")
+
+
 GEO_CACHE = {}          # query -> ("ok", [results]) | ("err", message)
 _geo_pending = set()
 _geo_query = [""]       # what the user is typing right now
@@ -46,8 +52,8 @@ def _geo_fetch(q):
             ctry = r.get("country", "")
             if r.get("admin1") and r.get("admin1") != r.get("name"):
                 ctry = (ctry + ", " + r["admin1"]) if ctry else r["admin1"]
-            res.append({"name": _ascii(r["name"]), "zone": tz, "lat": float(r["latitude"]), "lon": float(r["longitude"]),
-                        "country": ctry, "pop": int(r.get("population") or 0), "online": True})
+            res.append({"name": _clean(_ascii(r["name"])), "zone": tz, "lat": float(r["latitude"]), "lon": float(r["longitude"]),
+                        "country": _clean(ctry), "pop": int(r.get("population") or 0), "online": True})
         GEO_CACHE[q] = ("ok", res)
     except Exception as e:
         GEO_CACHE[q] = ("err", (str(getattr(e, "reason", e)) or type(e).__name__)[:40])
