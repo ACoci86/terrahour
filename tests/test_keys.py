@@ -271,3 +271,12 @@ class TestMouse:
         state.mode = "help"
         handle_mouse(state, self.meta(state, now), 65, 0, 39, True, now, now)
         assert state.sel == 0
+
+
+def test_input_box_buffer_is_capped(state, now):
+    from terrahour.keys import BUF_MAX
+    press(state, ["a"], now)
+    type_text(state, "x" * 5000, now)
+    assert len(state.buf) == BUF_MAX
+    press(state, [ESC], now)
+    assert state.mode is None
