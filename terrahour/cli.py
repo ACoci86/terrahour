@@ -61,7 +61,10 @@ def main():
         st.ambient = True
         st.amb_t0 = time.time()
     st.mouse = not args.no_mouse
-    at = parse_at(args.at) if args.at else None
+    try:
+        at = parse_at(args.at) if args.at else None
+    except ValueError:
+        ap.error("--at must be ISO 8601, e.g. 2026-10-05T09:00Z")
     if args.watch:
         watch(st, args)
         return
@@ -74,7 +77,12 @@ def main():
         return
     if args.once:
         if args.size:
-            W, H = (int(v) for v in args.size.lower().split("x"))
+            try:
+                W, H = (int(v) for v in args.size.lower().split("x"))
+            except ValueError:
+                ap.error("--size must look like 120x40")
+            if not (1 <= W <= 2000 and 1 <= H <= 2000):
+                ap.error("--size W and H must each be 1-2000")
         else:
             W, H = shutil.get_terminal_size((120, 40))
         now = at or utcnow().replace(microsecond=0)
