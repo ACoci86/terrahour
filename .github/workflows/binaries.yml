@@ -1,0 +1,55 @@
+name: binaries
+
+# Single-file executables, built with PyInstaller on each platform and attached to the release.
+# Run by hand (workflow_dispatch) to check the builds without publishing anything.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04,     label: linux-x86_64 }   # 22.04: older glibc, so it runs on more distros
+          - { os: ubuntu-22.04-arm, label: linux-arm64 }
+          - { os: macos-latest,     label: macos-arm64 }    # Apple Silicon
+          - { os: macos-15-intel,   label: macos-x86_64 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller tzdata .
+          pyinstaller --onefile --name terrahour --collect-data terrahour --collect-data tzdata \
+                      --hidden-import tzdata tools/binary_entry.py
+          mv dist/terrahour "terrahour-${{ matrix.label }}"
+      - name: Smoke test
+        run: |
+          ./terrahour-${{ matrix.label }} --version
+          TERRAHOUR_OFFLINE=1 ./terrahour-${{ matrix.label }} --json --at 2026-03-18T14:30:00Z | head -c 300
+          TERRAHOUR_OFFLINE=1 ./terrahour-${{ matrix.label }} --once --size 100x30 --at 2026-03-18T14:30:00Z > /dev/null
+      - name: Checksum
+        run: shasum -a 256 "terrahour-${{ matrix.label }}" > "terrahour-${{ matrix.label }}.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: terrahour-${{ matrix.label }}
+          path: |
+            terrahour-${{ matrix.label }}
+            terrahour-${{ matrix.label }}.sha256
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "terrahour-${{ matrix.label }}" "terrahour-${{ matrix.label }}.sha256" --clobber
+
+permissions:
+  contents: write

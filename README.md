@@ -80,6 +80,18 @@ pip install terrahour
 terrahour
 ```
 
+**Without Python at all.** Every [release](https://github.com/ACoci86/terrahour/releases)
+has a single-file executable for Linux (x86_64 and ARM64) and macOS (Apple Silicon and Intel).
+Download the one for your machine, make it executable and run it:
+
+```sh
+chmod +x terrahour-linux-x86_64
+./terrahour-linux-x86_64
+```
+
+On macOS the first start is blocked because the file is not signed: run
+`xattr -d com.apple.quarantine terrahour-macos-arm64` once, or right-click it and choose Open.
+
 **From a clone.** There is nothing to build, so you can run it in place:
 
 ```sh
