@@ -140,3 +140,19 @@ def test_malformed_alerts_in_config_are_dropped():
     with open(p, "w") as f:
         json.dump({"alerts": [good] + bad}, f)
     assert state_from_config().alerts == [good]
+
+
+def test_save_replaces_symlink_and_uses_tight_permissions(tmp_path):
+    import stat
+    d = tmp_path / "config" / "terrahour"
+    d.mkdir(parents=True)
+    target = tmp_path / "victim.txt"
+    target.write_text("ORIGINAL")
+    link = d / "config.json"
+    link.symlink_to(target)
+    st = state_from_config()
+    st.save()
+    assert target.read_text() == "ORIGINAL"       # target untouched...
+    assert not link.is_symlink()                  # ...the link itself was replaced
+    assert stat.S_IMODE(link.stat().st_mode) == 0o600
+    assert json.loads(link.read_text())["cities"]  # and the new file is valid

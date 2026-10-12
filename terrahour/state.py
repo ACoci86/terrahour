@@ -2,6 +2,7 @@
 import json
 import math
 import os
+import tempfile
 import time
 from zoneinfo import ZoneInfo
 
@@ -91,13 +92,24 @@ class State:
         try:
             p = config_path()
             os.makedirs(os.path.dirname(p), exist_ok=True)
-            with open(p, "w", encoding="utf-8") as f:
-                json.dump({"cities": [c.to_json() for c in self.cities], "h12": self.h12,
-                           "work": list(self.work), "overlap": self.overlap, "theme": C.name,
-                           "home": self.home, "weather": self.weather, "compact": self.compact, "wheel": self.wheel,
-                           "night_shade": self.night_shade,
-                           "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
-                                      for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
+            fd, tmp = tempfile.mkstemp(dir=os.path.dirname(p), prefix=".config")
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    json.dump({"cities": [c.to_json() for c in self.cities], "h12": self.h12,
+                               "work": list(self.work), "overlap": self.overlap, "theme": C.name,
+                               "home": self.home, "weather": self.weather, "compact": self.compact,
+                               "wheel": self.wheel,
+                               "night_shade": self.night_shade,
+                               "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
+                                          for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
+                    os.chmod(tmp, 0o600)
+                    os.replace(tmp, p)
+            except BaseException:
+                try:
+                    os.unlink(tmp)
+                except OSError:
+                    pass
+                raise
         except OSError:
             pass
 
