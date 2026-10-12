@@ -185,3 +185,12 @@ class TestParseGoto:
         assert parse_goto("25:00", self.tz, now) == (None, "That isn't a valid time.")
         assert parse_goto("2026-02-30 10:00", self.tz, now) == (None, "That date doesn't exist.")
         assert parse_goto("nonsense", self.tz, now)[1].startswith("Try ")
+
+
+def test_parse_goto_huge_relative_returns_an_error_instead_of_raising(now):
+    import datetime as dt
+    for text in ("+999999999d", "+" + "9" * 5000 + "h", "-999999999999999999999d"):
+        t, err = parse_goto(text, dt.timezone.utc, now)
+        assert t is None and err
+    t, err = parse_goto("+2h", dt.timezone.utc, now)
+    assert err == "" and t == now + dt.timedelta(hours=2)
