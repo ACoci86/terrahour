@@ -104,3 +104,13 @@ def test_non_string_theme_in_config_falls_back_to_midnight():
             json.dump({"theme": bad}, f)
         st = state_from_config()
         assert C.name == "midnight" and len(st.cities) == 9
+def test_malformed_work_pair_in_config_falls_back_to_default():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    for bad in (["9", "a"], [["x"], 5], [25, 5], "9-17", [9]):
+        with open(p, "w") as f:
+            json.dump({"work": bad}, f)
+        assert state_from_config().work == (9, 17)
+    with open(p, "w") as f:
+        json.dump({"work": [8, 18]}, f)
+    assert state_from_config().work == (8, 18)
