@@ -128,3 +128,15 @@ def test_bad_coordinates_in_config_fall_back_to_zone_lookup():
                                "lat": 45.0, "lon": 14.0, "cidx": 0}]}, f)
     (c,) = state_from_config().cities
     assert (c.lat, c.lon) == (45.0, 14.0)
+def test_malformed_alerts_in_config_are_dropped():
+    p = config_path()
+    os.makedirs(os.path.dirname(p))
+    good = {"kind": "time", "name": "Rome", "zone": "Europe/Rome", "m": 540}
+    bad = [{"kind": "time", "name": "x", "zone": "UTC", "m": "09:00"},
+           {"kind": "time", "name": "x", "zone": "UTC"},
+           {"kind": "time", "name": "x", "zone": "UTC", "m": 9999},
+           {"kind": "open", "name": 123, "zone": "UTC"},
+           {"kind": "bogus"}, "junk"]
+    with open(p, "w") as f:
+        json.dump({"alerts": [good] + bad}, f)
+    assert state_from_config().alerts == [good]

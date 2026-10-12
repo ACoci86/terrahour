@@ -162,5 +162,18 @@ def state_from_config():
     except (TypeError, ValueError):
         st.night_shade = 0.0
     st.weather = cfg.get("weather", "off") if cfg.get("weather") in ("off", "c", "f") else "off"
-    st.alerts = [a for a in cfg.get("alerts", []) if isinstance(a, dict) and a.get("kind") in ("time", "open", "close")]
+    st.alerts = [a for a in cfg.get("alerts", []) if _alert_ok(a)]
     return st
+
+
+def _alert_ok(a):
+    """A config alert with all the fields its kind needs, else False."""
+    if not isinstance(a, dict) or a.get("kind") not in ("time", "open", "close"):
+        return False
+    if not isinstance(a.get("name"), str) or not isinstance(a.get("zone"), str):
+        return False
+    if a["kind"] == "time" and (isinstance(a.get("m"), bool)
+                                or not isinstance(a.get("m"), int)
+                                or not 0 <= a["m"] < 1440):
+        return False
+    return True
