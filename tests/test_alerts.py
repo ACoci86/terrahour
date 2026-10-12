@@ -74,3 +74,15 @@ def test_open_alert_fires_on_the_transition(state):
     assert check_alerts(state, before) == []                             # first look just records the state
     assert check_alerts(state, before + dt.timedelta(minutes=1)) == ["London is open"]
     assert check_alerts(state, before + dt.timedelta(hours=9)) == []      # closing is not an "open" alert
+
+
+def test_notify_passes_option_terminator_before_alert_text(monkeypatch):
+    import subprocess
+    from terrahour import alerts
+    calls = []
+    class _P:
+        pass
+    monkeypatch.setattr(subprocess, "Popen", lambda *a, **k: calls.append(a) or _P())
+    monkeypatch.setattr("shutil.which", lambda *a: "/bin/notify-send")
+    alerts.notify("-u is open")
+    assert calls and calls[0][0][:2] == ["notify-send", "--"]
