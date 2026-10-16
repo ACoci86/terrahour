@@ -1,8 +1,12 @@
-<img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/logo.svg" alt="terrahour" width="400">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/logo.svg" alt="terrahour" width="400">
+</p>
 
-![tests](https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg)
-![PyPI](https://img.shields.io/pypi/v/terrahour?label=pypi)
-![license](https://img.shields.io/badge/license-MIT-green)
+<p align="center">
+  <img src="https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg" alt="tests">
+  <img src="https://img.shields.io/pypi/v/terrahour?label=pypi" alt="PyPI">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="license">
+</p>
 
 A world clock for the terminal. It shows a map of the world with day and night on it, and
 for every city you add, when the people there are at work.
