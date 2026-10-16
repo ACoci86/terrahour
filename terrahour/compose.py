@@ -6,7 +6,7 @@ from .ambient import compose_ambient
 from .astro import daylight, sun_pos
 from .canvas import Canvas
 from .clock import (fmt_delta, fmt_off, is_open, overlap_window, status_info, time_window, work_alpha)
-from .draw import draw_details, draw_footer, draw_map, draw_table, draw_ticks, draw_topbar
+from .draw import draw_details, draw_footer, draw_map, draw_table, draw_ticks, draw_topbar, draw_wordmark
 from .overlays import draw_overlays
 from .themes import C, mix
 from .weather import weather_refresh
@@ -49,9 +49,7 @@ def compose_compact(W, H, st, now, live_now):
     if tx > 1:
         cv.put(tx, 0, clock, C.CYAN, C.TOP_BG, True)
     if tx > 18:
-        cv.put(1, 0, "terra", C.WHITE, C.TOP_BG, True)
-        for i, c in enumerate("hour"):
-            cv.put(6 + i, 0, c, mix(C.ACC1, C.ACC2, i / 3), C.TOP_BG, True)
+        draw_wordmark(cv, 1, 0, globe=False)
         if st.markets and tx > 30:
             cv.put(12, 0, "markets", C.DIM, C.TOP_BG)
     # --- vertical budget

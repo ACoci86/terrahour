@@ -54,13 +54,20 @@ def draw_ticks(cv, y, xb, nb, start, span, step24=2):
         t += dt.timedelta(minutes=ivl)
 
 
+def draw_wordmark(cv, x, y, globe=True):
+    """The logo, in the colours of the active theme: a dotted globe (night side cyan, day side sun),
+    then "terra" in the text colour and "hour" in the sun colour. 13 cells wide with the globe, 9 without."""
+    if globe:
+        cv.put(x, y, "⢎", C.CYAN, C.TOP_BG, True)
+        cv.put(x + 1, y, "⡱", C.SUN, C.TOP_BG, True)
+        x += 3
+    cv.put(x, y, "terra", C.WHITE, C.TOP_BG, True)
+    cv.put(x + 5, y, "hour", C.SUN, C.TOP_BG, True)
+
+
 def draw_topbar(cv, W, st, now, live_now):
     cv.fill(0, 0, W, C.TOP_BG)
-    cv.put(1, 0, " ◉ ", C.ACC2, C.TOP_BG, True)
-    cv.put(4, 0, "terra", C.WHITE, C.TOP_BG, True)
-    name = "hour"
-    for i, c in enumerate(name):
-        cv.put(9 + i, 0, c, mix(C.ACC1, C.ACC2, i / (len(name) - 1)), C.TOP_BG, True)
+    draw_wordmark(cv, 1, 0)
     bits = ["markets" if st.markets else "work %02d–%02d" % st.work, "12h" if st.h12 else "24h", C.name]
     if st.weather != "off":
         bits.append("°" + st.weather.upper())

@@ -1,4 +1,4 @@
-# terrahour
+<img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/logo.svg" alt="terrahour" width="400">
 
 ![tests](https://github.com/ACoci86/terrahour/actions/workflows/tests.yml/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/terrahour?label=pypi)

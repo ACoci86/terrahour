@@ -215,7 +215,7 @@ def test_map_is_shaded_on_the_night_side_when_asked(state, now):
 
 
 def has_map(lines):
-    return any(0x2800 < ord(ch) <= 0x28FF for ln in lines for ch in ln)
+    return any(0x2800 < ord(ch) <= 0x28FF for ln in lines[1:] for ch in ln)   # row 0 is the top bar, whose logo is braille too
 
 
 def test_standard_80x24_terminal_keeps_the_map(state, now):
