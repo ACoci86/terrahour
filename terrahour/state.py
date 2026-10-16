@@ -43,6 +43,8 @@ class State:
         self.alerts = []
         self.aidx = 0
         self.mode = None            # None add goto help radar alerts alertnew
+        self.help_page = 0          # which page of the key list is open
+        self.help_size = None       # (W, H) the help was last drawn for, so keys know how many pages there are
         self.buf = ""
         self.results = []
         self.ridx = 0

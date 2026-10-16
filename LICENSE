@@ -19,12 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-----------------------------------------------------------------------
-
-The bundled data files under terrahour/data/ have their own licences:
-
-* cities.txt.gz is derived from GeoNames (https://www.geonames.org/),
-  licensed under Creative Commons Attribution 4.0 (CC BY 4.0).
-* land_mask.bin.gz is rasterised from Natural Earth (https://www.naturalearthdata.com/),
-  which is in the public domain.

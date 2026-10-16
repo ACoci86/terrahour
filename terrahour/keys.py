@@ -9,6 +9,7 @@ from .alerts import parse_alert
 from .ambient import amb_entries, amb_featured
 from .clock import TSPANS, parse_goto, parse_hour
 from .draw import NIGHT_SHADES
+from .overlays import help_pages
 from .places import make_city, refresh_results
 from .state import WORK_PRESETS
 from .themes import C, THEME_ORDER, apply_theme
@@ -70,7 +71,16 @@ def handle_key(st, k, live, now):
             apply_theme(THEME_ORDER[(THEME_ORDER.index(C.name) + 1) % len(THEME_ORDER)])
             st.save()
         return False
-    if st.mode in ("help", "radar"):
+    if st.mode == "help":
+        pages = len(help_pages(*st.help_size)[0]) if st.help_size else 1
+        if pages > 1 and k in (" ", "\x1b[C", "\x1b[B", "\x1b[6~", "\t"):
+            st.help_page = (st.help_page + 1) % pages
+        elif pages > 1 and k in ("\x1b[D", "\x1b[A", "\x1b[5~"):
+            st.help_page = (st.help_page - 1) % pages
+        else:
+            st.mode = None
+        return False
+    if st.mode == "radar":
         st.mode = None
         return False
     if st.mode == "alerts":
@@ -271,7 +281,7 @@ def handle_key(st, k, live, now):
         st.save()
         st.say("Theme: " + C.name, C.TEXT)
     elif k == "?":
-        st.mode = "help"
+        st.mode, st.help_page = "help", 0
     return False
 
 

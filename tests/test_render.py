@@ -143,6 +143,43 @@ def test_help_fits_in_a_narrow_terminal(state, now):
     assert "Keys" in "\n".join(lines) and all(len(ln) == 80 for ln in lines)
 
 
+@pytest.mark.parametrize("mode", ["help", "radar", "add", "goto", "alerts", "alertnew"])
+@pytest.mark.parametrize("size", [(80, 24), (76, 16), (120, 40), (60, 12), (40, 8)])
+def test_every_popup_stays_inside_the_window(state, now, mode, size):
+    state.mode = mode
+    text = "\n".join(plain(compose(size[0], size[1], state, now, now)))
+    assert text.count("╭") == text.count("╰")                    # every box that opens also closes
+
+
+def test_help_turns_pages_when_the_window_is_short(state, now):
+    from terrahour.overlays import HELP_L, HELP_R, help_pages
+    state.mode = "help"
+    pages, cols, rows = help_pages(80, 24)
+    assert len(pages) == 2 and cols == 1
+    assert help_pages(104, 40)[1] == 2 and help_pages(100, 40)[1] == 1 and sum(len(p) for p in pages) == len(HELP_L) + len(HELP_R)
+    text = "\n".join(plain(compose(80, 24, state, now, now)))
+    assert "Keys  1/2" in text and "next page" in text and "scrub time 15 min" in text
+    assert len(help_pages(120, 40)[0]) == 1                      # a big window shows everything at once
+
+
+@pytest.mark.parametrize("W", [88, 100, 104, 120, 160])
+def test_help_text_never_crosses_the_right_border(state, now, W):
+    from terrahour.overlays import HELP_L, HELP_R, help_pages
+    state.mode = "help"
+    seen = ""
+    for page in range(len(help_pages(W, 40)[0])):
+        state.help_page = page
+        lines = plain(compose(W, 40, state, now, now))
+        top = next(ln for ln in lines if "Keys" in ln)
+        left, right = top.index("╭"), top.index("╮")
+        for ln in lines:
+            if ln[left] == "│":
+                assert ln[right] == "│", ln                       # the right border is intact on every row
+        seen += "\n".join(lines)
+    for _, d in HELP_L + HELP_R:
+        assert d in seen                                          # and nothing had to be cut to achieve that
+
+
 def test_add_overlay_lists_results(state, now):
     from terrahour.places import refresh_results
     state.mode, state.buf = "add", "naples"

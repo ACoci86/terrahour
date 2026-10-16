@@ -18,6 +18,14 @@ def box(cv, x, y, w, h, title):
     cv.put(x + 2, y, " %s " % title, C.WHITE, C.PANEL_BG, True)
 
 
+def place(W, H, w, h):
+    """Where a box of the wanted size goes: a third of the way down, shrunk and lifted if the window is too small."""
+    h = min(h, H)
+    x = (W - w) // 2
+    y = min(max(1, (H - h) // 3), H - h)
+    return x, max(0, y), h
+
+
 def input_line(cv, x, y, buf):
     cv.put(x, y, "› ", C.ACC1, C.PANEL_BG, True)
     cv.put(x + 2, y, buf, C.WHITE, C.PANEL_BG, True)
@@ -27,7 +35,7 @@ def input_line(cv, x, y, buf):
 def draw_add(cv, W, H, st, now):
     w = min(72, W - 4)
     h = 14
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     box(cv, x, y, w, h, "Add city")
     input_line(cv, x + 3, y + 2, st.buf)
     cv.put(x + 2, y + 3, "\u2500" * (w - 4), C.BORDER, C.PANEL_BG)
@@ -38,7 +46,7 @@ def draw_add(cv, W, H, st, now):
     elif not st.results:
         cv.put(x + 3, y + 5, "No match yet." if geo_status(st.buf).startswith("search") else
                "No match. Check the spelling, or try a zone like Europe/Berlin.", C.AMBER, C.PANEL_BG)
-    for i, e in enumerate(st.results):
+    for i, e in enumerate(st.results[:max(0, h - 6)]):
         yy = y + 4 + i
         sel = i == st.ridx
         bg = C.SEL_BG if sel else C.PANEL_BG
@@ -65,7 +73,7 @@ def goto_zone_name(st):
 def draw_goto(cv, W, H, st):
     w = min(68, W - 4)
     h = 8
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     box(cv, x, y, w, h, "Go to time")
     input_line(cv, x + 3, y + 2, st.buf)
     if st.err:
@@ -78,7 +86,7 @@ def draw_goto(cv, W, H, st):
 def draw_follow(cv, W, H, st):
     w = min(68, W - 4)
     h = 8
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     box(cv, x, y, w, h, "Follow a time of day")
     input_line(cv, x + 3, y + 2, st.buf)
     if st.err:
@@ -112,14 +120,14 @@ HELP_R = [
     ("W", "weather off / °C / °F"),
     ("T", "next theme"),
     ("N", "night shade on the map"),
-    ("c", "compact layout on / off / auto"),
+    ("c", "compact layout on/off/auto"),
     ("V", "ambient screensaver view"),
     ("g (ambient)", "map follows a time of day"),
     ("t", "12h / 24h clock"),
     ("click", "select a row or map city"),
     ("click bars", "jump to that time"),
     ("drag bars", "scrub time"),
-    ("wheel", "zoom map / timeline (Z: scrub)"),
+    ("wheel", "zoom map / timeline"),
     ("+ -", "zoom map"),
     ("[ ]", "zoom timeline"),
     ("0", "reset zoom"),
@@ -131,24 +139,34 @@ HELP_R = [
 ]
 
 
-def draw_help(cv, W, H):
+def help_pages(W, H):
+    """The key list cut into pages that fit the window: (pages, columns, rows per column)."""
     w = min(100, W - 4)
-    two = w >= 84
-    items = HELP_L + HELP_R if not two else None
-    h = (max(len(HELP_L), len(HELP_R)) if two else len(items)) + 4
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
-    box(cv, x, y, w, h, "Keys")
-    if two:
-        for col, lst in enumerate((HELP_L, HELP_R)):
-            cx = x + 3 + col * (w // 2 - 1)
-            for i, (k, d) in enumerate(lst):
-                cv.put(cx, y + 2 + i, k, C.KEY, C.PANEL_BG, True)
-                cv.put(cx + 20, y + 2 + i, d, C.TEXT, C.PANEL_BG)
-    else:
-        for i, (k, d) in enumerate(items):
-            cv.put(x + 3, y + 2 + i, k, C.KEY, C.PANEL_BG, True)
-            cv.put(x + 24, y + 2 + i, d, C.TEXT, C.PANEL_BG)
-    cv.put(x + 3, y + h - 1, " any key to close ", C.DIM, C.PANEL_BG)
+    cols = 2 if w >= 100 else 1                   # two columns only when every entry fits beside its key
+    rows = max(1, H - 6)                          # box borders, title row and footer take the rest
+    items = HELP_L + HELP_R
+    per_page = cols * rows
+    pages = [items[i:i + per_page] for i in range(0, len(items), per_page)]
+    return pages, cols, rows
+
+
+def draw_help(cv, W, H, st):
+    pages, cols, rows = help_pages(W, H)
+    page = pages[st.help_page % len(pages)]
+    w = min(100, W - 4)
+    per_col = min(rows, (len(page) + cols - 1) // cols)
+    h = per_col + 4
+    x, y, h = place(W, H, w, h)
+    box(cv, x, y, w, h, "Keys" if len(pages) == 1 else "Keys  %d/%d" % (st.help_page % len(pages) + 1, len(pages)))
+    for i, (k, d) in enumerate(page):
+        col, row = divmod(i, per_col)
+        cx = x + 3 + col * (w // 2 - 1)
+        dx = cx + (16 if cols == 2 else 24)
+        room = x + w - 2 - dx                                   # never run into the right border
+        cv.put(cx, y + 2 + row, k[:max(0, dx - cx - 1)], C.KEY, C.PANEL_BG, True)
+        cv.put(dx, y + 2 + row, d if len(d) <= room else d[:max(0, room - 1)] + "…", C.TEXT, C.PANEL_BG)
+    foot = " any key to close " if len(pages) == 1 else " Space or \u2192 next page   any other key closes "
+    cv.put(x + 3, y + h - 1, foot[:w - 6], C.DIM, C.PANEL_BG)
 
 
 def draw_radar(cv, W, H, st, now):
@@ -157,7 +175,7 @@ def draw_radar(cv, W, H, st, now):
     w = min(104, W - 4)
     vis = min(n, max(3, H - 12))
     h = vis + 7
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     ref = "home" if st.home else "here"
     box(cv, x, y, w, h, "DST radar  ·  next clock change, and gap to %s" % ref)
     cv.put(x + 3, y + 2, "City", C.DIM, C.PANEL_BG)
@@ -207,11 +225,11 @@ def alert_desc(a):
 def draw_alerts(cv, W, H, st):
     w = min(76, W - 4)
     h = max(10, min(len(st.alerts), 10) + 8)
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     box(cv, x, y, w, h, "Alerts")
     if not st.alerts:
         cv.put(x + 3, y + 2, "No alerts yet. Press n to add one.", C.DIM, C.PANEL_BG)
-    for i, a in enumerate(st.alerts[:10]):
+    for i, a in enumerate(st.alerts[:max(0, h - 8)]):
         yy = y + 2 + i
         bg = C.SEL_BG if i == st.aidx else C.PANEL_BG
         cv.fill(x + 1, yy, w - 2, bg)
@@ -224,7 +242,7 @@ def draw_alerts(cv, W, H, st):
 def draw_alertnew(cv, W, H, st):
     w = min(72, W - 4)
     h = 11
-    x, y = (W - w) // 2, max(1, (H - h) // 3)
+    x, y, h = place(W, H, w, h)
     box(cv, x, y, w, h, "New alert")
     input_line(cv, x + 3, y + 2, st.buf)
     if st.err:
@@ -250,6 +268,7 @@ def draw_banner(cv, W, st):
 
 def draw_overlays(cv, W, H, st, now):
     cv.meta["mode"] = st.mode
+    st.help_size = (W, H)
     if st.mode == "add":
         draw_add(cv, W, H, st, now)
     elif st.mode == "goto":
@@ -257,7 +276,7 @@ def draw_overlays(cv, W, H, st, now):
     elif st.mode == "follow":
         draw_follow(cv, W, H, st)
     elif st.mode == "help":
-        draw_help(cv, W, H)
+        draw_help(cv, W, H, st)
     elif st.mode == "radar":
         draw_radar(cv, W, H, st, now)
     elif st.mode == "alerts":

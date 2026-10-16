@@ -291,6 +291,22 @@ def test_g_in_the_ambient_view_sets_the_time_to_follow(state, now):
     assert state.amb_follow is None
 
 
+def test_help_pages_turn_with_space_and_close_with_anything_else(state, now):
+    press(state, ["?"], now)
+    compose(80, 24, state, now, now)                            # drawing records the window size
+    assert state.mode == "help" and state.help_page == 0
+    press(state, [" "], now)
+    assert state.mode == "help" and state.help_page == 1
+    press(state, [" "], now)
+    assert state.help_page == 0                                 # wraps round
+    press(state, ["x"], now)
+    assert state.mode is None
+    press(state, ["?"], now)
+    compose(120, 40, state, now, now)                           # one page: any key closes
+    press(state, [" "], now)
+    assert state.mode is None
+
+
 def test_input_box_buffer_is_capped(state, now):
     from terrahour.keys import BUF_MAX
     press(state, ["a"], now)

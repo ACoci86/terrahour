@@ -1,9 +1,9 @@
 # Working on terrahour
 
-Notes for anyone changing the code, me included. Users don't need any of this; the
-[README](README.md) is for them.
+If you want to change the code, this is the page for you. If you just want to use the app,
+the [README](README.md) and the [manual](MANUAL.md) are what you need.
 
-## Set up
+## Getting it running from the source
 
 ```sh
 git clone https://github.com/ACoci86/terrahour
@@ -13,72 +13,80 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The app has no third-party dependencies; the dev extras are only `pytest` and `pillow`.
-`.venv/bin/terrahour` runs your working copy.
+That's it. The app itself needs nothing beyond Python; the only extras are `pytest` for the
+tests and `pillow` for the screenshots. After this, `.venv/bin/terrahour` runs whatever is
+in your working copy, so you can edit a file and start it again straight away.
 
 ## Tests
 
-`pytest` runs in a few seconds and needs neither a terminal nor the network: the tests
-compose frames in memory and drive the app through the same key handler the terminal loop
-uses. Every push to `main` and every pull request runs them on Linux (Python 3.9, 3.11, 3.13)
-and macOS through GitHub Actions.
+`pytest` takes a few seconds. The tests don't open a terminal and don't touch the network:
+they draw frames in memory and press keys through the same code the real app uses, so they
+run anywhere. GitHub runs them on Linux (Python 3.9, 3.11 and 3.13) and on macOS for every
+push and every pull request.
 
-Handy while working on the layout:
+Three things I use all the time while working on the layout:
 
 ```sh
-terrahour --once --size 80x24 --at 2026-03-18T14:30Z     # one frame, any size, fixed time
-TERRAHOUR_OFFLINE=1 ...                                   # never touch the network
-XDG_CONFIG_HOME=/tmp/somewhere ...                        # leave your own config alone
+terrahour --once --size 80x24 --at 2026-03-18T14:30Z     # print one frame at any size and time, then exit
+TERRAHOUR_OFFLINE=1 terrahour ...                         # never go online
+XDG_CONFIG_HOME=/tmp/somewhere terrahour ...              # use a throwaway config instead of your own
 ```
 
 ## Screenshots
 
-`tools/screenshots.py` regenerates everything in `docs/` (the README images and the demo
-GIF). It paints frames with Pillow, so the images are reproducible and don't depend on
-anyone's terminal. It needs the DejaVu fonts; set `TERRAHOUR_FONT_DIR` if yours live
-somewhere unusual.
+The pictures in `docs/` are not real screenshots. `tools/screenshots.py` draws the frames and
+paints them with Pillow, so they come out the same on every machine. Run it after a change
+that alters how things look, and commit what it produces. It wants the DejaVu fonts; if yours
+are somewhere unusual, point `TERRAHOUR_FONT_DIR` at them.
 
-## How it is put together
+## Where things are
 
-| Module | What it does |
+| File | What's in it |
 | --- | --- |
-| `cli.py` | argument parsing and the non-interactive modes |
-| `app.py` | the terminal loop: raw mode, input tokens, redraw only the lines that changed |
-| `keys.py` | every key and mouse event ends up here |
-| `compose.py`, `draw.py`, `overlays.py`, `ambient.py` | turn the state into a frame |
-| `canvas.py` | a character grid with colours that renders to ANSI escapes |
-| `clock.py` | offsets, formatting, open/closed status, DST transitions, overlap |
-| `astro.py` | sun position, sunrise and sunset |
-| `worldmap.py` | the land mask, braille rasterisation, zoom and pan |
-| `places.py`, `geocode.py` | the city database, search, and the online lookup |
-| `state.py` | the State object and the config file |
+| `cli.py` | the command line: options, and the modes that print something and exit |
+| `app.py` | the terminal loop: raw mode, reading keys, redrawing only the lines that changed |
+| `keys.py` | what every key and mouse event does |
+| `compose.py` | decides the layout for the window size and draws a whole frame |
+| `draw.py` | the map, the table, the details line, the footer |
+| `overlays.py` | the boxes that pop up: add city, go to time, help, radar, alerts |
+| `ambient.py` | the big-clock view |
+| `canvas.py` | a grid of coloured characters that turns into terminal escape codes |
+| `clock.py` | time zones, offsets, open or closed, clock changes, the overlap |
+| `astro.py` | where the sun is, sunrise and sunset |
+| `worldmap.py` | the land mask, the braille rendering, zoom and pan |
+| `places.py`, `geocode.py` | the city database, searching it, and the online lookup |
+| `state.py` | everything the app remembers, and the config file |
 | `alerts.py`, `weather.py` | what the names say |
-| `themes.py` | colours; every module reads them through the active theme object `C` |
+| `themes.py` | the colours; everything reads them through `C`, the active theme |
 | `data/` | the city list, the land mask and the exchange list, with [their own README](terrahour/data/README.md) |
 
-The map is a 0.25 degree land mask folded into a summed-area table, so any zoom level can
-ask "how much of this box is land?" in constant time, and the braille cells come straight
-out of that. Sun position uses the usual NOAA approximation, good to a few minutes.
+Two things that are not obvious from the code:
 
-Themes are plain dictionaries of RGB tuples in `themes.py`; adding one is a new entry
-there plus its name in `THEME_ORDER`.
+* The map is a grid of 0.25 degree cells saying how much of each cell is land, stored as a
+  summed-area table. That lets any zoom level ask "how much land is in this box?" in one
+  step, and the braille dots come straight out of the answer.
+* The sun's position uses the usual NOAA approximation. It's good to a few minutes, which is
+  plenty for a shaded map.
 
-## Releasing
+Adding a theme is a new dictionary in `themes.py` and its name in `THEME_ORDER`; nothing
+else needs to know.
 
-1. Bump `__version__` in `terrahour/__init__.py` and commit.
-2. Create a GitHub release with a `vX.Y.Z` tag. That triggers two workflows:
-   `publish.yml` uploads the package to PyPI (trusted publishing, no token stored anywhere)
-   and `binaries.yml` builds a single-file executable on Linux (x86_64, ARM64) and macOS
-   (Apple Silicon, Intel) with PyInstaller and attaches them to the release.
-3. `binaries.yml` can also be run by hand from the Actions tab to check the builds without
-   publishing anything.
+## Making a release
 
-PyPI never accepts the same version twice, so get the README right before tagging: the
-project page shows the README as it was at release time.
+1. Change `__version__` in `terrahour/__init__.py` and commit.
+2. On GitHub, create a release with a tag like `v1.0.7`. That sets off two workflows:
+   `publish.yml` sends the package to PyPI, and `binaries.yml` builds a single-file
+   executable on Linux (x86_64, ARM64) and macOS (Apple Silicon, Intel) and attaches them
+   to the release.
+3. If you want to check the executables build without releasing anything, run
+   `binaries.yml` by hand from the Actions tab.
+
+PyPI never accepts the same version number twice, and its project page shows the README as
+it was when you released, so get the README right before you tag.
 
 ## Odds and ends
 
-* The `assets` branch holds only images linked from issues. It is not part of the app and
-  should not be merged into `main`.
-* `tools/binary_entry.py` exists because PyInstaller wants a plain script as the entry
-  point, not a package.
+* The `assets` branch only holds pictures linked from issues. It's not part of the app;
+  don't merge it into `main`.
+* `tools/binary_entry.py` exists because PyInstaller wants a plain script to start from,
+  not a package.
