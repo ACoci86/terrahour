@@ -1,0 +1,138 @@
+:root, :root[data-theme="dark"] {
+  --bg: #0b1119;
+  --text: #e8ecf2;
+  --muted: #93a0b2;
+  --line: #223043;
+  --accent: #3b8be6;
+  --box: #131c28;
+  --box-hover: #1b2736;
+  --term-bg: #0d1420;
+  --term-head: #0a1119;
+  --shadow: rgba(0, 0, 0, .55);
+}
+:root[data-theme="light"] {
+  --bg: #f7f7f5;
+  --text: #1b2430;
+  --muted: #5b6472;
+  --line: #e2e4e8;
+  --accent: #3b8be6;
+  --box: #eef0f3;
+  --box-hover: #e3e6ea;
+  --term-bg: #0d1420;
+  --term-head: #111a26;
+  --shadow: rgba(20, 30, 50, .22);
+}
+/* dark is the default: light logo text, and the button offers the sun; in light mode the reverse */
+.logo .light, #mode .moon { display: none; }
+:root[data-theme="light"] .logo .light, :root[data-theme="light"] #mode .moon { display: block; }
+:root[data-theme="light"] .logo .dark, :root[data-theme="light"] #mode .sun { display: none; }
+#mode { margin-left: 28px; border: 1px solid var(--line); background: var(--box); color: var(--muted); border-radius: 8px;
+        width: 38px; height: 34px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+#mode:hover { background: var(--box-hover); color: var(--text); }
+#mode svg { width: 18px; height: 18px; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Ubuntu Mono", "DejaVu Sans Mono", ui-monospace, Menlo, Consolas, monospace;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0 10px; position: relative; }
+.logo img { height: 72px; display: block; }
+nav { display: flex; align-items: center; }
+nav a { margin-left: 28px; font-weight: 700; font-size: 19px; color: var(--muted); }
+nav a:hover { color: var(--text); }
+#menu { display: none; border: 1px solid var(--line); background: var(--box); color: var(--muted); border-radius: 8px;
+        width: 42px; height: 38px; cursor: pointer; align-items: center; justify-content: center; }
+#menu svg { width: 22px; height: 22px; }
+#menu .close, header.open #menu .open { display: none; }
+header.open #menu .close { display: block; }
+
+.hero { text-align: center; padding: 28px 0 14px; }
+.hero h1 { font-size: clamp(34px, 5.2vw, 60px); font-weight: 700; letter-spacing: 0; margin: 0; }
+.hero p { font-size: clamp(17px, 1.9vw, 22px); color: var(--muted); margin: 10px 0 0; }
+
+.terminal {
+  max-width: 920px; margin: 30px auto 0;
+  background: var(--term-bg); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 24px 60px var(--shadow), 0 2px 6px var(--shadow);
+}
+.terminal .bar { height: 34px; background: var(--term-head); display: flex; align-items: center; gap: 8px; padding: 0 14px; }
+.terminal .bar i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.terminal .bar .title { margin-left: 10px; color: #7f8ba0; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+.terminal { position: relative; }
+.slides { position: relative; aspect-ratio: 1104 / 746; overflow: hidden; }
+.track { display: flex; height: 100%; transition: transform .6s cubic-bezier(.4, 0, .2, 1); will-change: transform; }
+.track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; }
+.arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 64px; border: 0; border-radius: 10px;
+         background: rgba(0, 0, 0, .35); color: #fff; font-size: 34px; line-height: 1; cursor: pointer; opacity: 0; transition: opacity .2s; }
+.terminal:hover .arrow, .arrow:focus-visible { opacity: 1; }
+.arrow.prev { left: 10px; } .arrow.next { right: 10px; }
+.arrow:hover { background: rgba(0, 0, 0, .6); }
+.dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+.dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; padding: 0; background: var(--line); cursor: pointer; }
+.dots button.on { background: var(--accent); }
+
+.install {
+  max-width: 640px; margin: 28px auto 0;
+  display: flex; align-items: center;
+  background: var(--box); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px 12px 20px;
+  font-family: "Ubuntu Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 20px;
+}
+.install .prompt { color: var(--muted); margin-right: 16px; }
+.install code { flex: 1; }
+.install button {
+  border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 6px; border-radius: 6px;
+  font: inherit; display: flex; align-items: center;
+}
+.install button:hover { background: var(--box-hover); color: var(--text); }
+.install button svg { width: 20px; height: 20px; }
+.install button .tick, .install button .label { display: none; }
+.install button.done .clip { display: none; }
+.install button.done .tick { display: block; }
+.install button.done .label { display: inline; margin-left: 6px; font-weight: 700; font-size: 13px; color: var(--muted); }
+
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 920px; margin: 40px auto 0; }
+.card { background: var(--box); border: 1px solid var(--line); border-radius: 14px; padding: 22px 16px 16px; text-align: center; }
+.card .art { height: 112px; display: flex; align-items: center; justify-content: center; padding: 0 6px; }
+.card img { max-height: 100%; max-width: 100%; width: auto; height: auto; }
+.card img.map { width: 96%; }
+.card p { margin: 14px 0 0; font-weight: 700; font-size: 19px; color: var(--text); }
+@media (max-width: 720px) {
+  .wrap { padding: 0 16px; }
+  header { padding: 14px 0 6px; }
+  .logo img { height: 52px; }
+  #menu { display: inline-flex; }
+  nav { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 10;
+        flex-direction: column; align-items: stretch; background: var(--box); border: 1px solid var(--line);
+        border-radius: 12px; padding: 8px; box-shadow: 0 16px 40px var(--shadow); }
+  header.open nav { display: flex; }
+  nav a { margin: 0; padding: 12px 14px; border-radius: 8px; font-size: 16px; }
+  nav a:hover { background: var(--box-hover); }
+  #mode { margin: 6px 14px 4px; width: auto; height: 40px; }
+  #mode::after { content: "Dark or light"; margin-left: 10px; font-weight: 700; font-size: 15px; }
+  .hero { padding: 18px 0 8px; }
+  .terminal { margin-top: 20px; border-radius: 10px; }
+  .terminal .bar { height: 28px; }
+  .terminal .bar i { width: 10px; height: 10px; }
+  .arrow { opacity: 1; width: 34px; height: 48px; font-size: 26px; background: rgba(0, 0, 0, .45); }
+  .install { font-size: 15px; padding: 10px 10px 10px 14px; margin-top: 18px; }
+  .install .prompt { margin-right: 10px; }
+  .features { grid-template-columns: 1fr; gap: 14px; margin-top: 26px; }
+  .card { padding: 18px 14px 14px; }
+  .card .art { height: 84px; }
+  footer { padding: 26px 0 32px; }
+}
+@media (hover: none) { .arrow { opacity: 1; } }
+
+.alt { text-align: center; color: var(--muted); font-size: 16px; margin: 12px 0 0; line-height: 1.6; }
+.alt a, footer a { color: var(--accent); }
+.alt a:hover, footer a:hover { text-decoration: underline; }
+footer { text-align: center; color: var(--muted); padding: 36px 0 44px; font-size: 17px; }
+footer p { margin: 4px 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
