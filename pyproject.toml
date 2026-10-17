@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Utilities",
 ]
-dependencies = []
+dependencies = ["tzdata; sys_platform == 'win32'"]
 
 [project.optional-dependencies]
 dev = ["pytest", "pillow"]
