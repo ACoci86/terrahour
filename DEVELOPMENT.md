@@ -14,7 +14,9 @@ pytest
 ```
 
 That's it. The app itself needs nothing beyond Python; the only extras are `pytest` for the
-tests and `pillow` for the screenshots. After this, `.venv/bin/terrahour` runs whatever is
+tests and `pillow` for the screenshots. (On Windows, pip also brings in the small `tzdata`
+package, because Windows has no time zone database of its own. That is the one line under
+`dependencies` in `pyproject.toml`.) After this, `.venv/bin/terrahour` runs whatever is
 in your working copy, so you can edit a file and start it again straight away.
 
 ## Tests

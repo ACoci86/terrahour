@@ -104,7 +104,9 @@ compact layout, or goes back.
 ## Other ways to install
 
 You need Python 3.9 or newer and a terminal that supports 24-bit colour, which is almost all
-of them. Linux and macOS; on Windows use WSL.
+of them. Linux and macOS. On Windows, use WSL to get the full app: installed directly on
+Windows, the full-screen view does not start, but the commands that print and exit work
+(`--line`, `--json`, `--once`, `--tmux`).
 
 **Ready-made executable, no Python.** Every [release](https://github.com/ACoci86/terrahour/releases)
 has one for Linux (x86_64, ARM64) and macOS (Apple Silicon, Intel), with a checksum file next
