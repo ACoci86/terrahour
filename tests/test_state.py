@@ -23,6 +23,7 @@ def test_save_and_reload_round_trip():
     st.cities = [City("Rome", "Europe/Rome", 41.9, 12.5, 4), City("Lima", "America/Lima", -12.0, -77.0, 1)]
     st.h12, st.work, st.overlap, st.weather, st.compact, st.wheel = True, (8, 18), False, "c", "on", "scrub"
     st.night_shade = 0.5
+    st.labels = "time"
     st.amb_follow = 9.5
     st.home = {"name": "Rome", "zone": "Europe/Rome"}
     st.alerts = [{"kind": "time", "name": "Rome", "zone": "Europe/Rome", "m": 540, "_last": "x"},
@@ -37,6 +38,7 @@ def test_save_and_reload_round_trip():
     assert st2.h12 and st2.work == (8, 18) and not st2.overlap
     assert st2.weather == "c" and st2.compact == "on" and st2.wheel == "scrub" and st2.night_shade == 0.5
     assert st2.amb_follow == 9.5
+    assert st2.labels == "time"
     assert st2.home == {"name": "Rome", "zone": "Europe/Rome"}
     assert st2.alerts == [{"kind": "time", "name": "Rome", "zone": "Europe/Rome", "m": 540}]   # timers are not saved
     assert C.name == "nord"

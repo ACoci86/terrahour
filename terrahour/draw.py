@@ -151,8 +151,11 @@ def draw_map(cv, W, y0, mw, mh, infos, rows, sel, st, now, open_flags):
             continue
         ci = rows[i]
         x, y = pts[i]
-        _, off, abbr = infos[i]
-        sub = "(%s)" % fmt_off(off) if abbr in ("UTC", "") else "%s (%s)" % (abbr, fmt_off(off))
+        loc, off, abbr = infos[i]
+        if st.labels == "time":          # the city's clock under its name (issue #22)
+            sub = fmt_clock(loc, st.h12)
+        else:
+            sub = "(%s)" % fmt_off(off) if abbr in ("UTC", "") else "%s (%s)" % (abbr, fmt_off(off))
         chosen = None
         # name over zone where there is room, then the name alone, then just the dot: labels never overlap.
         # The smaller the map, the less it carries: names only on a medium one, and on a small one the

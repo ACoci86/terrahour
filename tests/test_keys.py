@@ -144,6 +144,10 @@ def test_toggles(state, now):
     assert state.compact == "on"
     press(state, ["Z"], now)
     assert state.wheel == "scrub"
+    press(state, ["L"], now)
+    assert state.labels == "time" and "local time" in state.msg[0]
+    press(state, ["L"], now)
+    assert state.labels == "zone"
     press(state, [ENTER], now)
     assert state.focus
 

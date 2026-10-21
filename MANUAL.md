@@ -28,6 +28,7 @@ list.
 | `t` | 12-hour or 24-hour clock |
 | `c` | compact layout on, off, or automatic |
 | `N` | shade over the night side of the map: off, 25%, 50%, 75%, 100% |
+| `L` | map labels show the zone and UTC offset, or the local time |
 | `V` | ambient view |
 | `+` `-` | zoom the map; `0` resets |
 | `[` `]` | zoom the timeline; `0` resets |
@@ -66,7 +67,8 @@ terrahour --version
 ```
 
 Everything you change in the app is saved to `~/.config/terrahour/config.json`. Zones given
-on the command line are for that session only.
+on the command line are for that session only. The map labels can also be set there by hand:
+`"labels": "time"` for the local time, `"labels": "zone"` for the zone and UTC offset.
 
 ## Status bars and scripts
 

@@ -59,6 +59,7 @@ class State:
         self.tsi = 0                # time-axis zoom index into TSPANS
         self.wheel = "zoom"         # zoom | scrub
         self.night_shade = 0.0      # shade over the night side of the map, 0 (off) to 1
+        self.labels = "zone"        # second line of a map label: zone (abbreviation and offset) | time
         self.drag = None
         self.ambient = False        # screensaver view
         self.amb_pin = None         # featured city index; None = cycle automatically
@@ -102,7 +103,7 @@ class State:
                                "work": list(self.work), "overlap": self.overlap, "theme": C.name,
                                "home": self.home, "weather": self.weather, "compact": self.compact,
                                "wheel": self.wheel, "amb_follow": self.amb_follow,
-                               "night_shade": self.night_shade,
+                               "night_shade": self.night_shade, "labels": self.labels,
                                "alerts": [{k: v for k, v in a.items() if not k.startswith("_")}
                                           for a in self.alerts if a["kind"] != "timer"]}, f, indent=1)
                 os.chmod(tmp, 0o600)
@@ -179,6 +180,7 @@ def state_from_config():
     except (TypeError, ValueError):
         st.night_shade = 0.0
     st.weather = cfg.get("weather", "off") if cfg.get("weather") in ("off", "c", "f") else "off"
+    st.labels = cfg.get("labels") if cfg.get("labels") in ("zone", "time") else "zone"
     st.alerts = [a for a in cfg.get("alerts", []) if _alert_ok(a)]
     return st
 

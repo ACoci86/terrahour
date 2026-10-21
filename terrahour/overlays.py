@@ -120,6 +120,7 @@ HELP_R = [
     ("W", "weather off / °C / °F"),
     ("T", "next theme"),
     ("N", "night shade on the map"),
+    ("L", "map labels: zone / local time"),
     ("c", "compact layout on/off/auto"),
     ("V", "ambient screensaver view"),
     ("g (ambient)", "map follows a time of day"),

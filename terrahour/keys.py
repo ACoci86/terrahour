@@ -270,6 +270,10 @@ def handle_key(st, k, live, now):
         st.night_shade = nxt[0] if nxt else NIGHT_SHADES[0]
         st.save()
         st.say("Night shade: " + ("off" if st.night_shade == 0 else "%d%%" % round(st.night_shade * 100)), C.TEXT)
+    elif k == "L":
+        st.labels = "time" if st.labels == "zone" else "zone"
+        st.save()
+        st.say("Map labels: " + ("local time" if st.labels == "time" else "zone and UTC offset"), C.TEXT)
     elif k == "Z":
         st.wheel = "scrub" if st.wheel == "zoom" else "zoom"
         st.save()

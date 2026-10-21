@@ -55,6 +55,18 @@ def test_main_view_content(state, now):
     assert any(0x2800 <= ord(ch) <= 0x28FF for ch in text)     # the braille map
 
 
+def test_map_labels_can_show_the_local_time(state, now):
+    text = "\n".join(plain(compose(130, 40, state, now, now)))
+    assert "GMT (UTC+0)" in text and "JST (UTC+9)" in text        # zone and offset under the city name
+    state.labels = "time"
+    text = "\n".join(plain(compose(130, 40, state, now, now)))
+    assert "GMT (UTC+0)" not in text and "JST (UTC+9)" not in text
+    assert "23:30" in text                                        # Tokyo's clock on the map
+    state.h12 = True
+    text = "\n".join(plain(compose(130, 40, state, now, now)))
+    assert "11:30 PM" in text
+
+
 def test_columns_drop_out_as_the_terminal_gets_narrower(state, now):
     wide = "\n".join(plain(compose(130, 40, state, now, now)))
     mid = "\n".join(plain(compose(110, 40, state, now, now)))
