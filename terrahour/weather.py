@@ -62,6 +62,8 @@ def weather_refresh(rows):
         return
     keys = []
     for c in rows:
+        if not c.is_place:            # UTC and friends: no real place, no weather
+            continue
         k = _wkey(c)
         rec = WEATHER.get(k)
         if k not in keys and (rec is None or now - rec["ts"] > W_TTL):
@@ -97,6 +99,8 @@ def weather_word(code):
 
 def weather_cell(c, units, long=False):
     """(text, colour): the last good value if there is one (even while refreshing or rate-limited), else a status."""
+    if not c.is_place:
+        return "—", C.DIM
     rec = weather_for(c)
     if rec is not None:
         txt, col = fmt_weather(rec, units)

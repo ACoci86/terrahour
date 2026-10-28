@@ -384,12 +384,14 @@ def detail_groups(st, infos, rows, sel, now):
     groups = [[("▸ ", ci.color), (ci.name, ci.color, True), ("  " + ci.zone, C.DIM)]]
     stxt, scol = status_text(ci, now, st.work)
     groups.append([(stxt, scol)])
-    if st.weather != "off":
+    if st.weather != "off" and ci.is_place:
         wt, wc = weather_cell(ci, st.weather, True)
         groups.append([(wt, wc)])
-    s = sun_times(ci, now)
+    s = sun_times(ci, now) if ci.is_place else None      # UTC has no sunrise of its own
     sun = None
-    if isinstance(s, str):
+    if s is None:
+        pass
+    elif isinstance(s, str):
         groups.append([("☼ " + s, C.SUN)])
     else:
         r, ss = s
@@ -413,8 +415,9 @@ def detail_groups(st, infos, rows, sel, now):
         if g and (not tr or g[0] != tr[0]):
             groups.append([("gap to %s: %s → %s on %s" % (ref, fmt_rel(g[1]), fmt_rel(g[2]),
                                                                g[0].astimezone(st.home_tz() or ci.tz).strftime("%d %b")), C.AMBER)])
-    groups.append([("%.1f°%s %.1f°%s" % (abs(ci.lat), "N" if ci.lat >= 0 else "S",
-                                                  abs(ci.lon), "E" if ci.lon >= 0 else "W"), C.DIM)])
+    if ci.is_place:
+        groups.append([("%.1f°%s %.1f°%s" % (abs(ci.lat), "N" if ci.lat >= 0 else "S",
+                                                      abs(ci.lon), "E" if ci.lon >= 0 else "W"), C.DIM)])
     return groups, sun
 
 

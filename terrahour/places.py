@@ -189,6 +189,11 @@ def refresh_results(st):
                 break
 
 
+# Zones that are a time standard, not a place: their map dot is only a marker, so there is no
+# weather or sunrise to show for them (UTC sits at 12°N 0°E, which is Burkina Faso).
+NOT_PLACES = {"UTC", "UCT", "GMT", "GMT0", "GMT+0", "GMT-0", "Greenwich", "Universal", "Zulu"}
+
+
 class City:
     """A row in the table: a city (working hours) or an exchange (explicit sessions)."""
 
@@ -197,6 +202,11 @@ class City:
         self.sessions = tuple(sessions) if sessions else None
         self.weekdays = weekdays
         self.tz = ZoneInfo(zone)
+
+    @property
+    def is_place(self):
+        """False for UTC, GMT, Etc/GMT+5 and the like."""
+        return self.zone not in NOT_PLACES and not self.zone.startswith("Etc/")
 
     @property
     def color(self):

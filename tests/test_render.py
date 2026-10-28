@@ -67,6 +67,15 @@ def test_map_labels_can_show_the_local_time(state, now):
     assert "11:30 PM" in text
 
 
+def test_details_line_has_no_sun_times_or_coordinates_for_utc(state, now):
+    state.sel = next(i for i, c in enumerate(state.cities) if c.zone == "UTC")
+    text = "\n".join(plain(compose(130, 40, state, now, now)))
+    assert "☼ 0" not in text and "12.0°N" not in text      # no Burkina Faso sunrise or position
+    state.sel = next(i for i, c in enumerate(state.cities) if c.name == "London")
+    text = "\n".join(plain(compose(130, 40, state, now, now)))
+    assert "☼ 06:09" in text                                 # a real city keeps its sunrise
+
+
 def test_columns_drop_out_as_the_terminal_gets_narrower(state, now):
     wide = "\n".join(plain(compose(130, 40, state, now, now)))
     mid = "\n".join(plain(compose(110, 40, state, now, now)))
