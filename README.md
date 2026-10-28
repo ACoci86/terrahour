@@ -26,6 +26,9 @@ Then type `terrahour`. If you don't have pipx, install it first with `sudo apt i
 file for your system from the [releases page](https://github.com/ACoci86/terrahour/releases)
 instead.
 
+Using [uv](https://docs.astral.sh/uv/)? Run `uvx terrahour` to try it without installing,
+or `uv tool install terrahour` to keep it.
+
 It runs on Linux and macOS. On Windows, use WSL to get the full app; installed directly on
 Windows, only the commands that print and exit work (`--line`, `--json`, `--once`).
 

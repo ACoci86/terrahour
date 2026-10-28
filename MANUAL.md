@@ -125,6 +125,8 @@ choose Open.
 
 **Without installing:** `pipx run terrahour` or `uvx terrahour`.
 
+**With uv:** `uv tool install terrahour`, and later `uv tool upgrade terrahour`.
+
 **With pip, in a virtual environment** (recent Debian and Ubuntu refuse `pip install`
 outside one):
 
