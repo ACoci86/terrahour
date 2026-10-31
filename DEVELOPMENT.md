@@ -1,9 +1,9 @@
-# Working on terrahour
+# <img src="docs/icons/app-hack-studio.png" width="16" height="16" alt=""> Working on terrahour
 
 If you want to change the code, this is the page for you. If you just want to use the app,
 the [README](README.md) and the [manual](MANUAL.md) are what you need.
 
-## Getting it running from the source
+## <img src="docs/icons/app-run.png" width="16" height="16" alt=""> Getting it running from the source
 
 ```sh
 git clone https://github.com/ACoci86/terrahour
@@ -19,7 +19,7 @@ package, because Windows has no time zone database of its own. That is the one l
 `dependencies` in `pyproject.toml`.) After this, `.venv/bin/terrahour` runs whatever is
 in your working copy, so you can edit a file and start it again straight away.
 
-## Tests
+## <img src="docs/icons/ladybug.png" width="16" height="16" alt=""> Tests
 
 `pytest` takes a few seconds. The tests don't open a terminal and don't touch the network:
 they draw frames in memory and press keys through the same code the real app uses, so they
@@ -34,14 +34,14 @@ TERRAHOUR_OFFLINE=1 terrahour ...                         # never go online
 XDG_CONFIG_HOME=/tmp/somewhere terrahour ...              # use a throwaway config instead of your own
 ```
 
-## Screenshots
+## <img src="docs/icons/app-screenshot.png" width="16" height="16" alt=""> Screenshots
 
 The pictures in `docs/` are not real screenshots. `tools/screenshots.py` draws the frames and
 paints them with Pillow, so they come out the same on every machine. Run it after a change
 that alters how things look, and commit what it produces. It wants the DejaVu fonts; if yours
 are somewhere unusual, point `TERRAHOUR_FONT_DIR` at them.
 
-## Where things are
+## <img src="docs/icons/filetype-folder-open.png" width="16" height="16" alt=""> Where things are
 
 | File | What's in it |
 | --- | --- |
@@ -73,7 +73,7 @@ Two things that are not obvious from the code:
 Adding a theme is a new dictionary in `themes.py` and its name in `THEME_ORDER`; nothing
 else needs to know.
 
-## Making a release
+## <img src="docs/icons/build.png" width="16" height="16" alt=""> Making a release
 
 1. Change `__version__` in `terrahour/__init__.py` and commit.
 2. On GitHub, create a release with a tag like `v1.0.7`. That sets off two workflows:
@@ -86,7 +86,7 @@ else needs to know.
 PyPI never accepts the same version number twice, and its project page shows the README as
 it was when you released, so get the README right before you tag.
 
-## Odds and ends
+## <img src="docs/icons/utilities.png" width="16" height="16" alt=""> Odds and ends
 
 * The `assets` branch only holds pictures linked from issues. It's not part of the app;
   don't merge it into `main`.

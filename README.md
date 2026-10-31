@@ -15,7 +15,7 @@ By Alessio Coci. MIT licensed: copy it, change it, keep the notice.
 
 ![terrahour main view](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/main.png)
 
-## Install
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/download.png" width="16" height="16" alt=""> Install
 
 ```sh
 pipx install terrahour
@@ -32,7 +32,7 @@ or `uv tool install terrahour` to keep it.
 It runs on Linux and macOS. On Windows, use WSL to get the full app; installed directly on
 Windows, only the commands that print and exit work (`--line`, `--json`, `--once`).
 
-## The first five minutes
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/app-analog-clock.png" width="16" height="16" alt=""> The first five minutes
 
 It starts with a few example cities. Then:
 
@@ -47,7 +47,7 @@ It starts with a few example cities. Then:
 
 Your cities and settings are saved automatically.
 
-## What else it can do
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/demos.png" width="16" height="16" alt=""> What else it can do
 
 ![demo](https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/demo.gif)
 
@@ -65,7 +65,7 @@ shows when everybody is at their desk at the same time.
 Also: reminders in another city's time, the weather next to each city, a light theme and
 twelve more, a 12-hour clock, and the mouse.
 
-## More
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/book-open.png" width="16" height="16" alt=""> More
 
 Every key, every command-line option, status bars and scripts, window sizes, other ways to
 install, and how to update: it's all in the
@@ -74,14 +74,15 @@ install, and how to update: it's all in the
 Want to change the code? See
 [DEVELOPMENT.md](https://github.com/ACoci86/terrahour/blob/main/DEVELOPMENT.md).
 
-## Credits
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/app-user-settings.png" width="16" height="16" alt=""> Credits
 
 * City list derived from [GeoNames](https://www.geonames.org/) (CC BY 4.0).
 * Land mask rasterised from [Natural Earth](https://www.naturalearthdata.com/) (public domain).
 * Geocoding and weather from [Open-Meteo](https://open-meteo.com/) (CC BY 4.0).
 * Time zone rules come from your operating system's tz database through Python's `zoneinfo`.
 * Several hardening fixes by [yourpwnguy](https://github.com/yourpwnguy).
+* Heading icons from [SerenityOS](https://github.com/SerenityOS/serenity) (BSD-2-Clause, see [docs/icons/LICENSE](https://github.com/ACoci86/terrahour/blob/main/docs/icons/LICENSE)).
 
-## License
+## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/certificate.png" width="16" height="16" alt=""> License
 
 MIT. See [LICENSE](https://github.com/ACoci86/terrahour/blob/main/LICENSE).

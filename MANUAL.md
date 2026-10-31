@@ -1,9 +1,9 @@
-# terrahour manual
+# <img src="docs/icons/app-help.png" width="16" height="16" alt=""> terrahour manual
 
 Everything the [README](README.md) leaves out. Press `?` inside the app for the same key
 list.
 
-## Keys
+## <img src="docs/icons/app-keyboard-settings.png" width="16" height="16" alt=""> Keys
 
 | Key | What it does |
 | --- | --- |
@@ -42,14 +42,14 @@ that time, drag the bars to scrub, scroll to zoom, drag the map to pan when zoom
 In the ambient view: `←` `→` change the featured city, Space goes back to cycling, `m`
 drifts the map slowly, `g` makes the map follow a time of day, `V` or Esc leaves.
 
-## The map follows a time of day
+## <img src="docs/icons/app-maps.png" width="16" height="16" alt=""> The map follows a time of day
 
 In the ambient view press `g` and type a time, say `09:00`. From then on the map keeps the
 place where it is 09:00 right now in the centre, which means it slowly turns west, one full
 turn a day. A small tag under the map says "09:00 here". An empty entry switches it off.
 From the command line: `terrahour --ambient --follow 09:00`.
 
-## Command line
+## <img src="docs/icons/app-terminal.png" width="16" height="16" alt=""> Command line
 
 ```sh
 terrahour                                  # your saved cities
@@ -70,7 +70,7 @@ Everything you change in the app is saved to `~/.config/terrahour/config.json`. 
 on the command line are for that session only. The map labels can also be set there by hand:
 `"labels": "time"` for the local time, `"labels": "zone"` for the zone and UTC offset.
 
-## Status bars and scripts
+## <img src="docs/icons/app-system-monitor.png" width="16" height="16" alt=""> Status bars and scripts
 
 ```sh
 $ terrahour --line
@@ -86,13 +86,13 @@ $ terrahour --once --size 120x40           # one frame of the full screen, then 
 The JSON has each city's local time, UTC offset, whether it is inside working hours, minutes
 until that changes, and the next clock change.
 
-## Themes
+## <img src="docs/icons/themes.png" width="16" height="16" alt=""> Themes
 
 `T` cycles through them; `--theme name` starts with one. midnight (the default), nord,
 dracula, light, gruvbox, gruvbox-light, mono, green, amber, grey, paper, vaporwave,
 synthwave, colorblind.
 
-## Window size
+## <img src="docs/icons/window.png" width="16" height="16" alt=""> Window size
 
 | Your window | What you see |
 | --- | --- |
@@ -103,7 +103,7 @@ synthwave, colorblind.
 On a small map only the selected city is named, so the dots stay readable. `c` forces the
 compact layout, or goes back.
 
-## Other ways to install
+## <img src="docs/icons/hard-disk.png" width="16" height="16" alt=""> Other ways to install
 
 You need Python 3.9 or newer and a terminal that supports 24-bit colour, which is almost all
 of them. Linux and macOS. On Windows, use WSL to get the full app: installed directly on
@@ -147,7 +147,7 @@ python3 -m terrahour
 If the shell cannot find `terrahour` after a pipx install, run `pipx ensurepath` once and
 open a new terminal.
 
-## Updating
+## <img src="docs/icons/reload.png" width="16" height="16" alt=""> Updating
 
 ```sh
 pipx upgrade terrahour
@@ -157,7 +157,7 @@ With pip: `pip install --upgrade terrahour` in the same environment. In a clone:
 With an executable: download the new one. `terrahour --version` tells you which version you
 have.
 
-## Network
+## <img src="docs/icons/network.png" width="16" height="16" alt=""> Network
 
 Two features talk to the internet, and both are optional: the online lookup of city names
 that are not in the built-in list, and the weather. Set `TERRAHOUR_OFFLINE=1` to switch

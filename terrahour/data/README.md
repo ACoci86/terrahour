@@ -1,4 +1,4 @@
-# Bundled data
+# <img src="../../docs/icons/filetype-archive.png" width="16" height="16" alt=""> Bundled data
 
 Everything the app needs offline lives in this folder. All files are plain text
 (gzipped where they are big) so you can look at them with `zcat` or any editor.
