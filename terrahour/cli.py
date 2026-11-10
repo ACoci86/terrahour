@@ -65,6 +65,8 @@ def main():
         hours, err = parse_hour(args.follow)
         if err:
             ap.error("--follow: " + err)
+        if not args.ambient and (args.once or args.line or args.tmux or args.json or args.watch):
+            ap.error("--follow only has an effect with --ambient")
         st.amb_follow = hours
     st.mouse = not args.no_mouse
     try:
