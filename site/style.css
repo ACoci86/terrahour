@@ -103,15 +103,78 @@ main { display: flex; flex-direction: column; align-items: center; max-width: va
                  transform: scaleX(0); transform-origin: 0; transition: transform .5s cubic-bezier(.65, 0, .35, 1); }
 .made a:hover::after, .made a:focus-visible::after { transform: none; }
 
+/* The manual: the same column, a row of pills to jump around, and quiet cards for keys and commands. */
+.hero-icon { text-decoration: none; }
+kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin: 0 2px; padding: 0 6px; border: 1px solid var(--pill-line);
+      border-bottom-width: 2px; border-radius: 6px; background: var(--card); color: var(--ink); font: 12px/1 var(--font-mono); letter-spacing: 0;
+      vertical-align: 1px; white-space: nowrap; }
+.toc { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 560px; margin-top: 30px; }
+.toc a { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px 0 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--card);
+         color: var(--muted); font-size: 13.5px; text-decoration: none; transition: color .2s, background .2s; }
+.toc a:hover { color: var(--ink); background: var(--card-hover); }
+
+.manual { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+.manual section { padding-top: 76px; scroll-margin-top: 50px; }
+.manual h2 { display: flex; align-items: baseline; gap: 14px; margin: 0 0 18px; font-size: 26px; font-weight: 400; line-height: 1.25; letter-spacing: -.02em; }
+.manual h2 { align-items: center; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.glyph { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.toc .glyph { width: 14px; height: 14px; }
+
+/* The tiles of acoci.dev: quiet at rest, their own colour when you point at them. */
+.tile { position: relative; flex: none; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 10px;
+        background: var(--card); color: var(--muted); transition: color .2s, border-color .2s, box-shadow .2s, transform .2s; }
+.tile::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: var(--tile); opacity: 0; transition: opacity .2s;
+                box-shadow: inset 0 0 0 1px #0000000f, inset 0 1px #ffffff59; }
+.tile .glyph { position: relative; width: 17px; height: 17px; }
+.tile:hover, .tile:focus-visible, .manual section:target .tile { color: var(--glyph); border-color: transparent; transform: translateY(-2px); box-shadow: 0 3px 6px -3px #00000059; }
+.tile:hover::before, .tile:focus-visible::before, .manual section:target .tile::before { opacity: 1; }
+.tile:hover .glyph { stroke-width: 2; }
+.manual h3 { margin: 30px 0 8px; font-size: 15px; font-weight: 600; }
+.manual p { margin: 0 0 14px; color: var(--text); }
+.manual p strong { color: var(--ink); font-weight: 600; }
+.manual p a { color: var(--ink); text-decoration: underline 1.5px var(--highlight); text-underline-offset: 3px; }
+.manual code { padding: 1px 6px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink);
+               font: 13px/1.5 var(--font-mono); letter-spacing: 0; overflow-wrap: anywhere; }
+
+/* Two columns that become one on a phone: a key and what it does, a command and what it is for. */
+.rows { margin: 0 0 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); overflow: hidden; }
+.rows > div { display: grid; grid-template-columns: 190px 1fr; gap: 16px; align-items: baseline; padding: 10px 16px; transition: background .2s; }
+.rows > div + div { border-top: 1px solid var(--line); }
+.rows > div:hover { background: var(--card-hover); }
+.rows > div > :last-child { color: var(--text); }
+.rows .k { color: var(--muted); white-space: nowrap; }
+.rows .k kbd:first-child { margin-left: 0; }
+.rows.wide > div { grid-template-columns: 250px 1fr; }
+.rows.wide .k { color: var(--ink); white-space: normal; }
+.opts > div { grid-template-columns: 1fr; gap: 3px; }
+.opts code { justify-self: start; padding: 0; background: none; }
+.opts > div > span { color: var(--muted); font-size: 14px; }
+
+.term { margin: 0 0 18px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink);
+        font: 13px/1.75 var(--font-mono); letter-spacing: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.term .p { color: var(--faint); user-select: none; }
+.term .o { color: var(--muted); }
+
+.themes { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.themes li { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px 0 5px; border: 1px solid var(--line); border-radius: 999px;
+             background: var(--card); color: var(--text); font: 13px/1 var(--font-mono); letter-spacing: 0; }
+/* A tiny piece of the app: the theme's background and border, with three city dots in its first three colours. */
+.themes li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%;
+                     box-shadow: inset 0 0 0 1.5px var(--ring), 0 0 0 1px var(--pill-line);
+                     background: radial-gradient(circle at 6.5px 50%, var(--c1) 2.4px, transparent 3px),
+                                 radial-gradient(circle at 12px 50%, var(--c2) 2.4px, transparent 3px),
+                                 radial-gradient(circle at 17.5px 50%, var(--c3) 2.4px, transparent 3px), var(--bg-t); }
+
 /* Everything arrives one after the other, a touch late and from just below. */
 @keyframes row-in { from { opacity: 0; transform: translateY(4px); } }
 @media (prefers-reduced-motion: no-preference) {
-  main > *, .shot, .footer { animation: .5s ease-out backwards row-in; animation-delay: calc(var(--k, 0) * 80ms); }
+  main > *, .shot, .manual, .footer { animation: .5s ease-out backwards row-in; animation-delay: calc(var(--k, 0) * 80ms); }
   main > :nth-child(2) { --k: 1; }
   main > :nth-child(3) { --k: 2; }
   main > :nth-child(4) { --k: 3; }
   main > :nth-child(5) { --k: 4; }
-  .shot { --k: 6; }
+  .shot, .manual { --k: 6; }
   .footer { --k: 8; }
 }
 
@@ -133,4 +196,7 @@ main { display: flex; flex-direction: column; align-items: center; max-width: va
   .window-bar i { width: 8px; height: 8px; }
   .footer { padding-top: 64px; }
   .made { font-size: 17px; }
+  .rows > div, .rows.wide > div { grid-template-columns: 1fr; gap: 4px; }
+  .manual section { padding-top: 60px; }
+  .manual h2 { font-size: 22px; }
 }

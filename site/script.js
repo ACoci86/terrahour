@@ -21,6 +21,7 @@
 // Copy the install command when it, or the yellow button next to it, is clicked.
 (function () {
   var box = document.getElementById("install");
+  if (!box) return;
   var button = document.getElementById("copy");
   var cmd = document.getElementById("cmd");
   var said = document.getElementById("copied");
@@ -43,3 +44,4 @@
   });
   cmd.addEventListener("click", function () { button.click(); });
 })();
+

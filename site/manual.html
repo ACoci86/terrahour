@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>terrahour manual</title>
+<meta name="description" content="Every key, every command-line option, status bars and scripts, themes, window sizes, other ways to install, and how to update terrahour.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<!-- Before anything is drawn, so a visitor who chose the light page never sees a dark flash. -->
+<script>try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Line icons in the style of acoci.dev (Lucide shapes, ISC licence). -->
+<svg class="sprite" aria-hidden="true"><defs>
+  <symbol id="i-keys" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/></symbol>
+  <symbol id="i-follow" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+  <symbol id="i-command-line" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m7 11 2-2-2-2"/><path d="M11 13h4"/></symbol>
+  <symbol id="i-scripts" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-themes" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.12-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/></symbol>
+  <symbol id="i-window" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></symbol>
+  <symbol id="i-install" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-updating" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-network" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.86a10 10 0 0 1 14 0"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/></symbol>
+</defs></svg>
+<div class="top">
+  <div class="pill">
+    <button class="pill-btn" id="theme" type="button" aria-label="Switch between light and dark mode" title="Light / dark"><span class="theme-dot" aria-hidden="true"></span></button>
+    <span class="pill-sep" aria-hidden="true"></span>
+    <a class="pill-link" href="./"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v12h14V9"/></svg>home</a>
+    <a class="pill-link" href="https://github.com/ACoci86/terrahour"><svg class="pill-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>github</a>
+  </div>
+</div>
+
+<main>
+  <a class="hero-icon" href="./" aria-label="terrahour home"><img src="favicon.svg" alt="" width="46" height="46"></a>
+  <p class="hero-name">terrahour</p>
+  <h1 class="headline">The manual.</h1>
+  <p class="hero-intro">Everything the front page leaves out. Press <kbd>?</kbd> inside the app for the same list of keys.</p>
+  <nav class="toc" aria-label="Contents">
+    <a href="#keys"><svg class="glyph"><use href="#i-keys"/></svg>Keys</a>
+    <a href="#follow"><svg class="glyph"><use href="#i-follow"/></svg>Following a time</a>
+    <a href="#command-line"><svg class="glyph"><use href="#i-command-line"/></svg>Command line</a>
+    <a href="#scripts"><svg class="glyph"><use href="#i-scripts"/></svg>Status bars and scripts</a>
+    <a href="#themes"><svg class="glyph"><use href="#i-themes"/></svg>Themes</a>
+    <a href="#window"><svg class="glyph"><use href="#i-window"/></svg>Window size</a>
+    <a href="#install"><svg class="glyph"><use href="#i-install"/></svg>Other ways to install</a>
+    <a href="#updating"><svg class="glyph"><use href="#i-updating"/></svg>Updating</a>
+    <a href="#network"><svg class="glyph"><use href="#i-network"/></svg>Network</a>
+  </nav>
+</main>
+
+<article class="manual">
+
+  <section id="keys">
+    <h2><a class="tile" href="#keys" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #b79bff, #7c5cf0); --glyph: #fff"><svg class="glyph"><use href="#i-keys"/></svg></a>Keys</h2>
+    <div class="rows">
+      <div><span class="k"><kbd>←</kbd><kbd>→</kbd></span><span>move through the day, 15 minutes at a time</span></div>
+      <div><span class="k"><kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd></span><span>one hour at a time</span></div>
+      <div><span class="k"><kbd>PgUp</kbd><kbd>PgDn</kbd></span><span>one day at a time</span></div>
+      <div><span class="k"><kbd>g</kbd></span><span>go to a time: <code>15:30</code>, <code>3pm</code>, <code>+2h</code>, <code>2026-10-05 09:00</code></span></div>
+      <div><span class="k"><kbd>r</kbd></span><span>back to now</span></div>
+      <div><span class="k"><kbd>↑</kbd><kbd>↓</kbd> or <kbd>j</kbd><kbd>k</kbd></span><span>select a city</span></div>
+      <div><span class="k"><kbd>K</kbd><kbd>J</kbd> or <kbd>Shift</kbd>+<kbd>↑</kbd><kbd>↓</kbd></span><span>move the selected city up or down the list</span></div>
+      <div><span class="k"><kbd>a</kbd></span><span>add a city</span></div>
+      <div><span class="k"><kbd>d</kbd></span><span>remove the selected city</span></div>
+      <div><span class="k"><kbd>*</kbd></span><span>make the selected city your home; the time differences are then measured from it</span></div>
+      <div><span class="k"><kbd>Enter</kbd></span><span>focus the selected city and dim the others</span></div>
+      <div><span class="k"><kbd>m</kbd></span><span>overlap row on or off</span></div>
+      <div><span class="k"><kbd>w</kbd></span><span>change the working hours</span></div>
+      <div><span class="k"><kbd>M</kbd></span><span>stock exchanges instead of cities</span></div>
+      <div><span class="k"><kbd>D</kbd></span><span>DST radar: the next clock change in every city</span></div>
+      <div><span class="k"><kbd>A</kbd></span><span>alerts</span></div>
+      <div><span class="k"><kbd>W</kbd></span><span>weather off, in °C, in °F</span></div>
+      <div><span class="k"><kbd>T</kbd></span><span>next theme</span></div>
+      <div><span class="k"><kbd>t</kbd></span><span>12-hour or 24-hour clock</span></div>
+      <div><span class="k"><kbd>c</kbd></span><span>compact layout on, off, or automatic</span></div>
+      <div><span class="k"><kbd>N</kbd></span><span>shade over the night side of the map: off, 25%, 50%, 75%, 100%</span></div>
+      <div><span class="k"><kbd>L</kbd></span><span>map labels show the zone and UTC offset, or the local time</span></div>
+      <div><span class="k"><kbd>V</kbd></span><span>ambient view</span></div>
+      <div><span class="k"><kbd>+</kbd><kbd>-</kbd></span><span>zoom the map; <kbd>0</kbd> resets</span></div>
+      <div><span class="k"><kbd>[</kbd><kbd>]</kbd></span><span>zoom the timeline; <kbd>0</kbd> resets</span></div>
+      <div><span class="k"><kbd>Z</kbd></span><span>mouse wheel zooms, or scrubs time</span></div>
+      <div><span class="k"><kbd>?</kbd></span><span>help; in a small window the list comes in pages, <kbd>Space</kbd> turns them</span></div>
+      <div><span class="k"><kbd>q</kbd></span><span>quit</span></div>
+    </div>
+    <p><strong>With the mouse:</strong> click a city or its dot on the map to select it, click the bars to jump to
+      that time, drag the bars to scrub, scroll to zoom, drag the map to pan when zoomed.</p>
+    <p><strong>In the ambient view:</strong> <kbd>←</kbd><kbd>→</kbd> change the featured city, <kbd>Space</kbd> goes back
+      to cycling, <kbd>m</kbd> drifts the map slowly, <kbd>g</kbd> makes the map follow a time of day,
+      <kbd>V</kbd> or <kbd>Esc</kbd> leaves.</p>
+  </section>
+
+  <section id="follow">
+    <h2><a class="tile" href="#follow" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #62b0ff, #2f7cf6); --glyph: #fff"><svg class="glyph"><use href="#i-follow"/></svg></a>The map follows a time of day</h2>
+    <p>In the ambient view press <kbd>g</kbd> and type a time, say <code>09:00</code>. From then on the map keeps the
+      place where it is 09:00 right now in the centre, which means it slowly turns west, one full turn a day.
+      A small tag under the map says “09:00 here”. An empty entry switches it off.</p>
+    <p>From the command line: <code>terrahour --ambient --follow 09:00</code>.</p>
+  </section>
+
+  <section id="command-line">
+    <h2><a class="tile" href="#command-line" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #5a5a5a, #1f1f1f); --glyph: #fff"><svg class="glyph"><use href="#i-command-line"/></svg></a>Command line</h2>
+    <div class="rows opts">
+      <div><code>terrahour</code><span>your saved cities</span></div>
+      <div><code>terrahour Europe/Berlin "Home=America/Chicago" Naples</code><span>a one-off set of zones or city names, not saved</span></div>
+      <div><code>terrahour --markets</code><span>start in the exchange view</span></div>
+      <div><code>terrahour --at 2026-10-05T09:00Z</code><span>start frozen at a given time</span></div>
+      <div><code>terrahour --theme nord --12h</code><span>start with a theme and a 12-hour clock</span></div>
+      <div><code>terrahour --night-shade 0.5</code><span>shade the night side of the map (0 to 1)</span></div>
+      <div><code>terrahour --ambient</code><span>straight into the ambient view</span></div>
+      <div><code>terrahour --ambient --follow 09:00</code><span>…with the map following 9 in the morning</span></div>
+      <div><code>terrahour --compact</code><span>the small layout, whatever the window size</span></div>
+      <div><code>terrahour --no-mouse</code><span>leave the mouse to the terminal (text selection)</span></div>
+      <div><code>terrahour --reset</code><span>forget saved cities and settings</span></div>
+      <div><code>terrahour --version</code><span>which version you have</span></div>
+    </div>
+    <p>Everything you change in the app is saved to <code>~/.config/terrahour/config.json</code>. Zones given on the
+      command line are for that session only. The map labels can also be set there by hand:
+      <code>"labels": "time"</code> for the local time, <code>"labels": "zone"</code> for the zone and UTC offset.</p>
+  </section>
+
+  <section id="scripts">
+    <h2><a class="tile" href="#scripts" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #7ee2a8, #24a862); --glyph: #fff"><svg class="glyph"><use href="#i-scripts"/></svg></a>Status bars and scripts</h2>
+<pre class="term"><span class="p">$ </span>terrahour --line
+<span class="o">SF 07:30 · NY 10:30 · LON 14:30 · UTC 14:30 · DUB 18:30 · MUM 20:00 · SIN 22:30 · TOK 23:30 · SYD 01:30+1</span></pre>
+    <div class="rows opts">
+      <div><code>terrahour --watch</code><span>the same line, updating in place (good in a small tmux pane)</span></div>
+      <div><code>terrahour --tmux</code><span>with tmux colour codes, for your <code>status-right</code></span></div>
+      <div><code>terrahour --seconds --line</code><span>with seconds</span></div>
+      <div><code>terrahour --json --at 2026-03-18T14:30Z | jq '.cities[] | select(.open)'</code><span>everything, as JSON</span></div>
+      <div><code>terrahour --once --size 120x40</code><span>one frame of the full screen, then exit</span></div>
+    </div>
+    <p>The JSON has each city’s local time, UTC offset, whether it is inside working hours, minutes until that
+      changes, and the next clock change.</p>
+  </section>
+
+  <section id="themes">
+    <h2><a class="tile" href="#themes" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #ff93bb, #e0447e); --glyph: #fff"><svg class="glyph"><use href="#i-themes"/></svg></a>Themes</h2>
+    <p><kbd>T</kbd> cycles through them; <code>--theme name</code> starts with one. midnight is the default. Each circle is the theme’s background and border with the first three colours it gives your cities.</p>
+    <ul class="themes">
+      <li style="--bg-t: #0b0f1a; --ring: #343c56; --c1: #00beff; --c2: #3cdc8c; --c3: #aa6eff">midnight</li>
+      <li style="--bg-t: #2e3440; --ring: #566074; --c1: #88c0d0; --c2: #a3be8c; --c3: #b48ead">nord</li>
+      <li style="--bg-t: #282a36; --ring: #6272a4; --c1: #8be9fd; --c2: #50fa7b; --c3: #bd93f9">dracula</li>
+      <li style="--bg-t: #f8f8f4; --ring: #a8b0c6; --c1: #0082be; --c2: #14965a; --c3: #8246dc">light</li>
+      <li style="--bg-t: #282828; --ring: #7c6f64; --c1: #83a598; --c2: #b8bb26; --c3: #d3869b">gruvbox</li>
+      <li style="--bg-t: #fbf1c7; --ring: #a89984; --c1: #076678; --c2: #79740e; --c3: #8f3f71">gruvbox-light</li>
+      <li style="--bg-t: #000000; --ring: #787878; --c1: #00c8ff; --c2: #00ff78; --c3: #ff00ff">mono</li>
+      <li style="--bg-t: #020c04; --ring: #1e6e2d; --c1: #3cff64; --c2: #aaffd2; --c3: #b4ff5a">green</li>
+      <li style="--bg-t: #0e0900; --ring: #785000; --c1: #ffb000; --c2: #ffe18c; --c3: #ff8c28">amber</li>
+      <li style="--bg-t: #101010; --ring: #646464; --c1: #ebebeb; --c2: #a5a5a5; --c3: #ffffff">grey</li>
+      <li style="--bg-t: #fafafa; --ring: #969696; --c1: #141414; --c2: #5f5f5f; --c3: #000000">paper</li>
+      <li style="--bg-t: #1c0a32; --ring: #965ad2; --c1: #01cdfe; --c2: #05ffa1; --c3: #b967ff">vaporwave</li>
+      <li style="--bg-t: #0e0618; --ring: #a032be; --c1: #00e6ff; --c2: #00ffb4; --c3: #c850ff">synthwave</li>
+      <li style="--bg-t: #0b0f1a; --ring: #343c56; --c1: #56b4e9; --c2: #009e73; --c3: #cc79a7">colorblind</li>
+    </ul>
+  </section>
+
+  <section id="window">
+    <h2><a class="tile" href="#window" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #6fe0de, #1d9fae); --glyph: #fff"><svg class="glyph"><use href="#i-window"/></svg></a>Window size</h2>
+    <div class="rows wide">
+      <div><span class="k">At least 76 columns wide and 21 rows tall</span><span>Everything: the map on top and the city table under it</span></div>
+      <div><span class="k">Wide enough, but only 16 to 20 rows tall</span><span>The city table on its own, because the map would not fit</span></div>
+      <div><span class="k">Narrower than 76 columns, or shorter than 16 rows</span><span>The compact layout: one line per city with a small timeline, no map</span></div>
+    </div>
+    <p>On a small map only the selected city is named, so the dots stay readable. <kbd>c</kbd> forces the compact
+      layout, or goes back.</p>
+  </section>
+
+  <section id="install">
+    <h2><a class="tile" href="#install" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #ffb27a, #f0712a); --glyph: #fff"><svg class="glyph"><use href="#i-install"/></svg></a>Other ways to install</h2>
+    <p>You need Python 3.9 or newer and a terminal that supports 24-bit colour, which is almost all of them.
+      Linux and macOS. On Windows, use WSL to get the full app: installed directly on Windows, the full-screen view
+      does not start, but the commands that print and exit work (<code>--line</code>, <code>--json</code>,
+      <code>--once</code>, <code>--tmux</code>).</p>
+
+    <h3>Ready-made executable, no Python</h3>
+    <p>Every <a href="https://github.com/ACoci86/terrahour/releases">release</a> has one for Linux (x86_64, ARM64)
+      and macOS (Apple Silicon, Intel), with a checksum file next to it. Download, then:</p>
+<pre class="term"><span class="p">$ </span>chmod +x terrahour-linux-x86_64
+<span class="p">$ </span>./terrahour-linux-x86_64</pre>
+    <p>On a Mac the first start is blocked because the file is not signed by Apple. Run
+      <code>xattr -d com.apple.quarantine terrahour-macos-arm64</code> once, or right-click the file and choose Open.</p>
+
+    <h3>Without installing</h3>
+    <p><code>pipx run terrahour</code> or <code>uvx terrahour</code>.</p>
+
+    <h3>With uv</h3>
+    <p><code>uv tool install terrahour</code>, and later <code>uv tool upgrade terrahour</code>.</p>
+
+    <h3>With pip, in a virtual environment</h3>
+    <p>Recent Debian and Ubuntu refuse <code>pip install</code> outside one.</p>
+<pre class="term"><span class="p">$ </span>python3 -m venv .venv &amp;&amp; . .venv/bin/activate
+<span class="p">$ </span>pip install terrahour
+<span class="p">$ </span>terrahour</pre>
+
+    <h3>From a clone</h3>
+    <p>There is nothing to build.</p>
+<pre class="term"><span class="p">$ </span>git clone https://github.com/ACoci86/terrahour
+<span class="p">$ </span>cd terrahour
+<span class="p">$ </span>python3 -m terrahour</pre>
+    <p>If the shell cannot find <code>terrahour</code> after a pipx install, run <code>pipx ensurepath</code> once and
+      open a new terminal.</p>
+  </section>
+
+  <section id="updating">
+    <h2><a class="tile" href="#updating" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #ffe07a, #fec132); --glyph: #4a3500"><svg class="glyph"><use href="#i-updating"/></svg></a>Updating</h2>
+<pre class="term"><span class="p">$ </span>pipx upgrade terrahour</pre>
+    <p>With pip: <code>pip install --upgrade terrahour</code> in the same environment. In a clone:
+      <code>git pull</code>. With an executable: download the new one. <code>terrahour --version</code> tells you
+      which version you have.</p>
+  </section>
+
+  <section id="network">
+    <h2><a class="tile" href="#network" aria-hidden="true" tabindex="-1" style="--tile: linear-gradient(160deg, #9aa2ff, #5058e6); --glyph: #fff"><svg class="glyph"><use href="#i-network"/></svg></a>Network</h2>
+    <p>Two features talk to the internet, and both are optional: the online lookup of city names that are not in
+      the built-in list, and the weather. Set <code>TERRAHOUR_OFFLINE=1</code> to switch both off. Nothing else
+      leaves your machine.</p>
+  </section>
+
+</article>
+
+<footer class="footer">
+  <div class="footer-rule" aria-hidden="true"></div>
+  <p class="made">Made with <!-- Tux by Larry Ewing, made with The GIMP; drawing from Devicon (MIT). --><img class="tux" src="tux.png" width="28" height="28" alt="Linux" title="Linux"> by <a href="https://acoci.dev/">Alessio Coci</a></p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
