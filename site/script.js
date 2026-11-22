@@ -1,73 +1,45 @@
+// Light or dark. The choice is remembered; the new page grows out of the button where the browser can do that.
 (function () {
   var root = document.documentElement;
-  var saved = "dark";
-  try { saved = localStorage.getItem("theme") || "dark"; } catch (e) {}
-  var q = new URLSearchParams(location.search).get("theme");
-  if (q === "dark" || q === "light") saved = q;
-  root.setAttribute("data-theme", saved);
-  document.getElementById("mode").addEventListener("click", function () {
-    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  var button = document.getElementById("theme");
+  function apply(next) {
     root.setAttribute("data-theme", next);
     try { localStorage.setItem("theme", next); } catch (e) {}
-  });
-})();
-(function () {
-  var header = document.querySelector("header");
-  var button = document.getElementById("menu");
+  }
   button.addEventListener("click", function () {
-    var open = header.classList.toggle("open");
-    button.setAttribute("aria-expanded", open ? "true" : "false");
+    var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) { apply(next); return; }
+    var box = button.getBoundingClientRect();
+    root.style.setProperty("--grow-x", (box.left + box.width / 2) + "px");
+    root.style.setProperty("--grow-y", (box.top + box.height / 2) + "px");
+    root.classList.add("theme-switching");
+    var done = function () { root.classList.remove("theme-switching"); };
+    document.startViewTransition(function () { apply(next); }).finished.then(done, done);
   });
-  document.querySelectorAll("#nav a").forEach(function (a) { a.addEventListener("click", function () { header.classList.remove("open"); }); });
-  document.addEventListener("click", function (e) { if (!header.contains(e.target)) header.classList.remove("open"); });
 })();
+
+// Copy the install command when it, or the yellow button next to it, is clicked.
 (function () {
+  var box = document.getElementById("install");
   var button = document.getElementById("copy");
-  var text = document.getElementById("cmd").textContent;
+  var cmd = document.getElementById("cmd");
+  var said = document.getElementById("copied");
   var reset;
   function done() {
-    button.classList.add("done"); button.title = "Copied";
+    box.classList.add("done"); said.textContent = "Copied";
     clearTimeout(reset);
-    reset = setTimeout(function () { button.classList.remove("done"); button.title = "Copy"; }, 1600);
+    reset = setTimeout(function () { box.classList.remove("done"); said.textContent = ""; }, 1600);
   }
   function fallback() {
-    var range = document.createRange(); range.selectNodeContents(document.getElementById("cmd"));
+    var range = document.createRange(); range.selectNodeContents(cmd);
     var sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
     try { document.execCommand("copy"); done(); } catch (e) {}
+    sel.removeAllRanges();
   }
   button.addEventListener("click", function () {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, fallback);
+      navigator.clipboard.writeText(cmd.textContent).then(done, fallback);
     } else { fallback(); }
   });
-  document.getElementById("cmd").addEventListener("click", function () { button.click(); });
-})();
-(function () {
-  var box = document.getElementById("carousel");
-  var track = box.querySelector(".track");
-  var slides = track.querySelectorAll("img");
-  var title = box.querySelector(".title");
-  var dots = document.getElementById("dots");
-  var i = 0, timer;
-  slides.forEach(function (_, n) {
-    var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Picture " + (n + 1));
-    b.addEventListener("click", function () { show(n); restart(); });
-    dots.appendChild(b);
-  });
-  function show(n) {
-    i = (n + slides.length) % slides.length;
-    track.style.transform = "translateX(-" + (i * 100) + "%)";
-    dots.querySelectorAll("button").forEach(function (b, k) { b.classList.toggle("on", k === i); });
-    title.textContent = slides[i].getAttribute("data-title");
-  }
-  function restart() { clearInterval(timer); timer = setInterval(function () { show(i + 1); }, 4000); }
-  box.querySelector(".prev").addEventListener("click", function () { show(i - 1); restart(); });
-  box.querySelector(".next").addEventListener("click", function () { show(i + 1); restart(); });
-  box.addEventListener("mouseenter", function () { clearInterval(timer); });
-  box.addEventListener("mouseleave", restart);
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowLeft") { show(i - 1); restart(); }
-    if (e.key === "ArrowRight") { show(i + 1); restart(); }
-  });
-  show(0); restart();
+  cmd.addEventListener("click", function () { button.click(); });
 })();
