@@ -6,6 +6,7 @@ so the images are reproducible and do not depend on anyone's terminal setup.
 
     pip install pillow
     python tools/screenshots.py            # writes docs/*.png and docs/demo.gif
+    python tools/screenshots.py --video    # writes the website's demo video into site/img/ (needs ffmpeg)
 
 Fonts: DejaVu Sans Mono for text, DejaVu Sans for braille (the mono face has none) and Symbola
 for the one or two symbols neither has. Override with TERRAHOUR_FONT_DIR if yours live elsewhere.
@@ -178,10 +179,96 @@ def demo_gif(painter, clock):
     print("wrote demo.gif (%d frames, %.1fs)" % (len(frames), sum(delays) / 1000))
 
 
+def demo_video(painter, clock, fps=25):
+    """The website's demo: the same tour as the GIF, but smooth, in full colour, with the clock ticking.
+
+    Frames go straight into ffmpeg as raw pixels, first to a lossless file, then to the WebM and MP4
+    the page serves, plus the first frame as the picture shown while the video loads."""
+    import shutil
+    import subprocess
+    import tempfile
+    if not shutil.which("ffmpeg"):
+        sys.exit("ffmpeg not found; it is needed for the video")
+    out = ROOT / "site" / "img"
+    out.mkdir(parents=True, exist_ok=True)
+    W, H = 110, 34
+    st = fresh_state()
+    elapsed = [0.0]
+    cache = {}
+
+    def now():
+        return NOW + dt.timedelta(seconds=int(elapsed[0]))   # the clock ticks once a second, as in the app
+
+    first = painter.paint(frame(st, W, H, now()))
+    first.save(out / "demo-poster.png", optimize=True)
+    size = "%dx%d" % first.size
+    with tempfile.TemporaryDirectory() as tmp:
+        master = Path(tmp) / "master.mkv"
+        enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", size, "-r", str(fps),
+                                "-i", "-", "-c:v", "libx264rgb", "-crf", "0", "-preset", "ultrafast", str(master)],
+                               stdin=subprocess.PIPE)
+
+        def hold(seconds):
+            for _ in range(max(1, round(seconds * fps))):
+                cv = frame(st, W, H, now())
+                k = (tuple(map(tuple, cv.ch)), tuple(map(tuple, cv.st)))
+                if k not in cache:
+                    cache.clear()
+                    cache[k] = painter.paint(cv).tobytes()
+                enc.stdin.write(cache[k])
+                elapsed[0] += 1 / fps
+                clock.advance(1 / fps)
+
+        def key(k, seconds=0.5):
+            handle_key(st, k, now(), st.frozen or now())
+            hold(seconds)
+
+        hold(2.6)
+        for _ in range(8):                                  # scrub two hours into the future
+            key("\x1b[C", 0.3)
+        hold(1.2)
+        key("j", 0.45)
+        key("j", 0.7)
+        key("\r", 1.8)                                      # focus London
+        key("\r", 0.4)
+        key("r", 1.2)                                       # back to live
+        key("M", 2.6)                                       # exchanges
+        key("M", 0.7)
+        key("D", 3.0)                                       # DST radar
+        key("\x1b", 0.5)
+        key("a", 0.7)
+        for ch in "naples":
+            key(ch, 0.16)
+        hold(0.8)
+        key("\r", 2.0)                                      # Naples is on the map now
+        key("+", 1.3)                                       # zoom the map on the selection
+        key("+", 1.8)
+        key("0", 0.9)
+        for _ in range(4):                                  # a few themes, then back to midnight
+            key("T", 1.3)
+        key("T", 0.3)
+        key("T", 0.7)
+        key("?", 2.8)                                       # help
+        key("\x1b", 0.5)
+        key("V", 3.5)                                       # ambient view
+        key("V", 1.5)
+        enc.stdin.close()
+        if enc.wait():
+            sys.exit("ffmpeg failed while recording")
+        common = ["ffmpeg", "-v", "error", "-y", "-i", str(master), "-pix_fmt", "yuv420p", "-an"]
+        subprocess.run(common + ["-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "40", "-row-mt", "1", str(out / "demo.webm")], check=True)
+        subprocess.run(common + ["-c:v", "libx264", "-preset", "veryslow", "-crf", "26", "-tune", "animation",
+                                 "-movflags", "+faststart", str(out / "demo.mp4")], check=True)
+    print("wrote site/img/demo.webm, demo.mp4 and demo-poster.png (%.1fs)" % elapsed[0])
+
+
 def main():
-    DOCS.mkdir(exist_ok=True)
     painter = Painter()
     clock = Clock()
+    if "--video" in sys.argv[1:]:
+        demo_video(painter, clock)
+        return
+    DOCS.mkdir(exist_ok=True)
     still_images(painter)
     demo_gif(painter, clock)
 

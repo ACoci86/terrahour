@@ -62,7 +62,7 @@ shows when everybody is at their desk at the same time.
 | --- | --- |
 | **Put it on a spare monitor.** The ambient view is a big clock over the map. Give it a time of day and the map slowly turns, keeping the place where it is that time in the middle. | **Fit it anywhere.** In a small window it shows a compact list; for a status bar there is a one-line mode. |
 
-Also: reminders in another city's time, the weather next to each city, a light theme and
+Also: alerts for when it's 9am in Tokyo or when New York opens, the weather next to each city, a light theme and
 twelve more, a 12-hour clock, and the mouse.
 
 ## <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/icons/book-open.png" width="16" height="16" alt=""> More

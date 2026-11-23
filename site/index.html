@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>terrahour: a world clock for the terminal</title>
 <meta name="description" content="A world clock for the terminal: see daylight, compare time zones, and find a time that works across cities.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="terrahour">
+<meta property="og:title" content="terrahour: a world clock for the terminal">
+<meta property="og:description" content="See daylight, compare time zones, and find a time that works across cities.">
+<meta property="og:url" content="https://acoci86.github.io/terrahour/">
+<meta property="og:image" content="https://acoci86.github.io/terrahour/img/main.png">
+<meta property="og:image:width" content="1104">
+<meta property="og:image:height" content="746">
+<meta property="og:image:alt" content="terrahour in a terminal: a world map with day and night, and a table of cities with their working hours">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
@@ -22,13 +32,14 @@
     <span class="pill-sep" aria-hidden="true"></span>
     <a class="pill-link" href="manual.html"><svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>manual</a>
     <a class="pill-link" href="https://github.com/ACoci86/terrahour"><svg class="pill-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>github</a>
+    <span class="gh-stats"><a class="gh-stat" href="https://github.com/ACoci86/terrahour/stargazers" data-gh="stargazers_count" title="Stars on GitHub" hidden><svg class="gh-icon gh-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.52 2.3a.53.53 0 0 1 .96 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.76a.53.53 0 0 1 .3.9l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.78.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.9l5.16-.76a2.12 2.12 0 0 0 1.6-1.16z"/></svg><span></span></a><a class="gh-stat" href="https://github.com/ACoci86/terrahour/forks" data-gh="forks_count" title="Forks on GitHub" hidden><svg class="gh-icon gh-fork" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/></svg><span></span></a></span>
   </div>
 </div>
 
 <main>
   <span class="hero-icon"><img src="favicon.svg" alt="" width="46" height="46"></span>
   <p class="hero-name">terrahour</p>
-  <h1 class="headline">A world clock<br>for the terminal.</h1>
+  <h1 class="headline">A world clock<br>for the terminal</h1>
   <p class="hero-intro">See daylight, compare time zones, and find a time that works across cities.</p>
 
   <div class="install" id="install">
@@ -40,15 +51,60 @@
     </button>
     <span class="visually-hidden" id="copied" aria-live="polite"></span>
   </div>
+  <a class="more" href="manual.html#install">Other ways to install <span aria-hidden="true">→</span></a>
 </main>
 
 <figure class="shot">
   <div class="window">
-    <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span class="window-title">terrahour --ambient</span></div>
-    <img src="https://raw.githubusercontent.com/ACoci86/terrahour/main/docs/ambient.png" width="924" height="594"
-         alt="terrahour in a terminal: a map of the world with day and night, and a big clock under it">
+    <div class="window-bar" aria-hidden="true"><span class="window-title"><span class="window-path">~</span> terrahour</span></div>
+    <video id="demo" autoplay muted loop playsinline preload="auto" width="1014" height="670" poster="img/demo-poster.png"
+           aria-label="terrahour in use: moving through the day, the stock exchanges, the DST radar, adding Naples, the themes, the help and the ambient clock">
+      <source src="img/demo.webm" type="video/webm">
+      <source src="img/demo.mp4" type="video/mp4">
+    </video>
   </div>
 </figure>
+
+<section class="feature" id="meetings">
+  <h2>Find a meeting time</h2>
+  <p>Each city gets a bar with its working hours. The row at the bottom shows when everybody is at their desk at the same time.</p>
+  <div class="window">
+    <div class="window-bar" aria-hidden="true"><span class="window-title"><span class="window-path">~</span> terrahour</span></div>
+    <img src="img/main.png" width="1104" height="746" loading="lazy" alt="terrahour: nine cities on the map, and a table showing each one’s working hours across the day">
+  </div>
+</section>
+
+<section class="feature" id="dst">
+  <h2>See clock changes coming</h2>
+  <p>The DST radar lists the next clock change in every city, and warns you when the gap between you and them is about to shift by an hour.</p>
+  <div class="window">
+    <div class="window-bar" aria-hidden="true"><span class="window-title"><span class="window-path">~</span> terrahour</span><span class="window-key">press <kbd>D</kbd></span></div>
+    <img src="img/radar.png" width="1104" height="746" loading="lazy" alt="The DST radar: each city’s next clock change and how the gap to home shifts">
+  </div>
+</section>
+
+<section class="feature" id="markets">
+  <h2>Watch the stock exchanges</h2>
+  <p>Swap your cities for the ten biggest exchanges, with their real trading hours and which ones are open right now.</p>
+  <div class="window">
+    <div class="window-bar" aria-hidden="true"><span class="window-title"><span class="window-path">~</span> terrahour</span><span class="window-key">press <kbd>M</kbd></span></div>
+    <img src="img/markets.png" width="1104" height="746" loading="lazy" alt="terrahour in markets mode: ten stock exchanges on the map, with their opening hours">
+  </div>
+</section>
+
+<section class="also">
+  <h2>And more</h2>
+  <dl>
+    <div><dt>Alerts</dt><dd>Get a notification when it’s 9am in Tokyo, or when New York starts work.</dd></div>
+    <div><dt>Weather</dt><dd>See the weather next to each city, in °C or °F.</dd></div>
+    <div><dt>Big clock</dt><dd>Turn it into a large clock over the map, for a spare screen.</dd></div>
+    <div><dt>One line</dt><dd>Print all your cities on one line, for tmux or a status bar.</dd></div>
+    <div><dt>Themes</dt><dd>Pick from 13 colour themes, including a light one.</dd></div>
+    <div><dt>12-hour clock</dt><dd>Show 3:00 pm instead of 15:00.</dd></div>
+    <div><dt>Mouse</dt><dd>Click a city to select it, or drag the bars to move through the day.</dd></div>
+  </dl>
+  <p>Works on Linux and macOS. On Windows, run it inside WSL.</p>
+</section>
 
 <footer class="footer">
   <div class="footer-rule" aria-hidden="true"></div>

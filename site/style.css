@@ -14,7 +14,6 @@
   --on-highlight: #171717;
   --pill-bg: #1c1c1cb8;
   --pill-line: #ffffff1a;
-  --top-glow: #ffffff12;
   --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
   --column: 600px;
@@ -31,12 +30,13 @@
   --card-hover: #0000000b;
   --pill-bg: #ffffffb8;
   --pill-line: #00000017;
-  --top-glow: #fff;
 }
 
 *, :before, :after { box-sizing: border-box; }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
-body { margin: 0; color: var(--ink); background: radial-gradient(1100px 640px at 50% -160px, var(--top-glow), transparent 70%) no-repeat, var(--bg);
+/* Links within a page glide to their place, unless the visitor has asked for less motion. */
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; color: var(--ink); background: var(--bg);
        font: 400 15px/1.6 var(--font-sans); letter-spacing: .01em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 a { color: inherit; }
 h1, p, figure { margin: 0; }
@@ -45,100 +45,137 @@ img { display: block; }
 :focus-visible { outline: 2px solid var(--highlight); outline-offset: 3px; border-radius: 4px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* The little pill at the top: light or dark, and the two places to read more. */
-.top { position: sticky; top: 0; z-index: 40; display: flex; justify-content: center; padding: 22px 16px 10px; pointer-events: none; }
-.pill { pointer-events: auto; display: flex; align-items: center; gap: 2px; height: 38px; padding: 0 4px; border: 1px solid var(--pill-line);
-        border-radius: 999px; background: var(--pill-bg); backdrop-filter: blur(10px); box-shadow: 0 4px 14px -8px #00000040; font-size: 13.5px; line-height: 1; }
-.pill-btn { flex: none; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 999px;
-            background: none; color: inherit; cursor: pointer; transition: background .2s; }
-.pill-btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
-.theme-dot { width: 12px; height: 12px; border: 1px solid var(--faint); border-radius: 50%;
-             background: linear-gradient(90deg, var(--faint) 50%, transparent 50%); transition: transform .4s var(--ease-out); }
+/* The menu at the top: light or dark, and the two places to read more. Plain words, no box around them. */
+.top { display: flex; justify-content: center; padding: 22px 16px 10px; }
+.pill { display: flex; align-items: center; gap: 6px; height: 38px; font-size: 13.5px; line-height: 1; }
+.pill-btn { flex: none; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0;
+            background: none; color: var(--muted); cursor: pointer; transition: color .2s; }
+.pill-btn:hover { color: var(--ink); }
+.theme-dot { width: 12px; height: 12px; border: 1px solid currentColor; border-radius: 50%;
+             background: linear-gradient(90deg, currentColor 50%, transparent 50%); transition: transform .4s var(--ease-out); }
 [data-theme=dark] .theme-dot { transform: rotate(180deg); }
-.pill-sep { width: 1px; height: 15px; margin: 0 4px; background: var(--pill-line); }
-.pill-link { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 10px; border-radius: 999px; color: var(--muted);
-             text-decoration: none; transition: color .2s, background .2s; }
-.pill-link:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.pill-sep { width: 1px; height: 15px; margin: 0 6px; background: var(--pill-line); }
+.pill-link { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 8px; color: var(--muted);
+             text-decoration: none; transition: color .2s; }
+.pill-link:hover { color: var(--ink); }
 .pill-icon { flex: none; width: 15px; height: 15px; }
+/* Stars and forks from GitHub, filled in by script.js once the page has loaded; hidden if GitHub can't be reached.
+   A yellow star and a quiet fork, each a link to its list on GitHub, set off from the menu by a thin line. */
+.gh-stats { display: flex; align-items: center; gap: 2px; }
+.gh-stats:has(.gh-stat:not([hidden]))::before { content: ""; width: 1px; height: 15px; margin: 0 6px 0 2px; background: var(--pill-line); }
+.gh-stat { display: flex; align-items: center; gap: 5px; height: 30px; padding: 0 6px; color: var(--ink); text-decoration: none;
+           font-variant-numeric: tabular-nums; animation: gh-in .4s ease-out; transition: color .2s; }
+.gh-stat[hidden] { display: none; }
+.gh-icon { flex: none; width: 14px; height: 14px; transition: transform .25s var(--ease-out); }
+.gh-star { fill: var(--highlight); }
+.gh-fork { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.gh-stat:hover .gh-star { transform: rotate(-12deg) scale(1.12); }
+.gh-stat:hover .gh-fork { stroke: var(--ink); }
+@keyframes gh-in { from { opacity: 0; } }
 
 main { display: flex; flex-direction: column; align-items: center; max-width: var(--column); margin: 0 auto; padding: 88px 20px 0; text-align: center; }
-.hero-icon { display: grid; place-items: center; width: 72px; height: 72px; margin-bottom: 12px; border-radius: 23%;
-             background: linear-gradient(160deg, #fff, #ececec); box-shadow: inset 0 0 0 1px #00000012, 0 8px 20px -10px #00000073; }
-.hero-icon img { width: 64%; height: 64%; }
+.hero-icon { display: block; margin-bottom: 14px; }
+.hero-icon img { width: 52px; height: 52px; }
 .hero-name { margin-bottom: 22px; font-size: 14px; color: var(--text); }
 .headline { font-size: 46px; font-weight: 400; line-height: 1.12; letter-spacing: -.025em; }
 .hero-intro { max-width: 440px; margin-top: 20px; color: var(--muted); }
 
 /* The command to install it; the yellow button copies it. */
 .install { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; height: 42px; margin-top: 30px; padding: 0 8px 0 17px;
-           border: 1px solid var(--line); border-radius: 999px; background: var(--card); font: 14px/1 var(--font-mono); letter-spacing: 0;
+           border: 1px solid var(--line); border-radius: 6px; background: var(--card); font: 14px/1 var(--font-mono); letter-spacing: 0;
            transition: background .2s; }
 .install:hover { background: var(--card-hover); }
 .install .prompt { color: var(--faint); user-select: none; }
 .install code { font: inherit; white-space: nowrap; cursor: pointer; }
-.chip { flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin-left: 4px; padding: 0; border: 0; border-radius: 50%;
-        background: var(--highlight); color: var(--on-highlight); cursor: pointer; transition: transform .2s; }
-.chip:hover { transform: scale(1.1); }
+.chip { flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin-left: 4px; padding: 0; border: 0; border-radius: 4px;
+        background: var(--highlight); color: var(--on-highlight); cursor: pointer; transition: filter .2s; }
+.chip:hover { filter: brightness(1.1); }
 .chip svg { grid-area: 1 / 1; width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round;
             stroke-linejoin: round; transition: opacity .2s, transform .35s var(--ease-out); }
 .chip .i-done, .install.done .i-copy { opacity: 0; transform: scale(.4); }
 .install.done .i-done { opacity: 1; transform: none; }
 
-/* The picture, in the same quiet window acoci.dev puts its screenshots in. */
+/* The picture, in a plain terminal window: a title bar with the command, nothing else. */
 .shot { max-width: 966px; margin: 64px auto 0; padding: 0 20px; }
-.window { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 30px 60px -30px #00000059; }
-.window-bar { position: relative; display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-bottom: 1px solid var(--line); }
-.window-bar i { width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 18%, transparent); }
-.window-title { position: absolute; left: 50%; translate: -50%; width: min(320px, 100% - 128px); padding: 3px 10px; border-radius: 7px;
-                background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--muted); font: 11px/1.6 var(--font-mono); letter-spacing: 0;
-                text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.window img { width: 100%; height: auto; }
+.window { overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+.window-bar { display: flex; align-items: center; height: 32px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+.window-title { color: var(--muted); font: 12px/1 var(--font-mono); letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.window-path { color: var(--highlight); }
+.window img, .window video { display: block; width: 100%; height: auto; }
+
+/* Three things it does, one after the other: a title, a sentence, and a large picture of it. */
+.feature { max-width: 966px; margin: 112px auto 0; padding: 0 20px; text-align: center; }
+.feature h2 { margin: 0; font-size: 30px; font-weight: 400; line-height: 1.2; letter-spacing: -.02em; }
+.feature p { max-width: 520px; margin: 14px auto 32px; color: var(--muted); }
+.window-key { margin-left: auto; color: var(--faint); font: 12px/1 var(--font-mono); letter-spacing: 0; }
+.window-key kbd { margin-right: 0; }
+
+/* Everything else: a name and one plain sentence each. */
+.also { max-width: 640px; margin: 112px auto 0; padding: 0 20px; }
+.also h2 { margin: 0 0 24px; font-size: 30px; font-weight: 400; line-height: 1.2; letter-spacing: -.02em; text-align: center; }
+.also dl { margin: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+.also dl > div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 11px 18px; }
+.also dl > div + div { border-top: 1px solid var(--line); }
+.also dt { color: var(--ink); }
+.also dd { margin: 0; color: var(--muted); }
+.also p { margin-top: 18px; color: var(--muted); font-size: 14px; text-align: center; }
+
+/* The quiet link under the install command, to the rest of the ways to get it. */
+.more { margin-top: 16px; color: var(--muted); font-size: 14px; text-decoration: none; transition: color .2s; }
+.more:hover { color: var(--ink); }
+.more span { display: inline-block; transition: transform .2s; }
+.more:hover span { transform: translateX(3px); }
 
 .footer { max-width: var(--column); margin: 0 auto; padding: 80px 20px 64px; }
 .footer-rule { height: 1px; margin-bottom: 40px; background: var(--line); }
-.made { display: flex; justify-content: center; align-items: center; gap: 10px; color: var(--muted); font-size: 18px; }
-.tux { flex: none; width: 28px; height: 28px; margin-top: -4px; }
+.made { display: flex; justify-content: center; align-items: center; gap: 7px; color: var(--muted); }
+.tux { flex: none; width: 20px; height: 20px; margin-top: -3px; }
 .made a { position: relative; color: var(--ink); text-decoration: none; }
 .made a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px; border-radius: 1px; background: var(--highlight);
                  transform: scaleX(0); transform-origin: 0; transition: transform .5s cubic-bezier(.65, 0, .35, 1); }
 .made a:hover::after, .made a:focus-visible::after { transform: none; }
 
-/* The manual: the same column, a row of pills to jump around, and quiet cards for keys and commands. */
-.hero-icon { text-decoration: none; }
+/* The top of the manual lines up with the sections under it, on the left, like a man page. */
+main.manual-head { align-items: flex-start; max-width: 680px; text-align: left; }
+.manual-head .hero-intro { max-width: none; }
+
+/* The manual: the same column, a card of contents to jump around, and quiet cards for keys and commands. */
 kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin: 0 2px; padding: 0 6px; border: 1px solid var(--pill-line);
-      border-bottom-width: 2px; border-radius: 6px; background: var(--card); color: var(--ink); font: 12px/1 var(--font-mono); letter-spacing: 0;
+      border-bottom-width: 2px; border-radius: 4px; background: var(--card); color: var(--ink); font: 12px/1 var(--font-mono); letter-spacing: 0;
       vertical-align: 1px; white-space: nowrap; }
-.toc { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 560px; margin-top: 30px; }
-.toc a { display: flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px 0 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--card);
-         color: var(--muted); font-size: 13.5px; text-decoration: none; transition: color .2s, background .2s; }
-.toc a:hover { color: var(--ink); background: var(--card-hover); }
+/* The contents: a quiet card with a label on top, so it reads as the menu for this page. */
+.toc { width: 100%; max-width: 520px; margin-top: 34px; padding: 14px 8px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); text-align: left; }
+.toc-title { margin: 0 12px 6px; color: var(--faint); font-size: 11.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.toc ol { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, auto); grid-auto-flow: column; gap: 0 4px; margin: 0; padding: 0; list-style: none; }
+.toc a { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 12px; border-radius: 4px; color: var(--text); font-size: 14px;
+         text-decoration: none; transition: color .2s, background .2s; }
+.toc a:hover, .toc a:focus-visible { color: var(--ink); background: var(--card-hover); }
+.toc .glyph { color: var(--faint); transition: color .2s; }
+.toc a:hover .glyph { color: var(--highlight); }
+.toc-arrow { flex: none; width: 13px; height: 13px; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+             opacity: 0; transition: opacity .2s; }
+.toc a:hover .toc-arrow, .toc a:focus-visible .toc-arrow { opacity: .7; }
 
 .manual { max-width: 680px; margin: 0 auto; padding: 0 20px; }
-.manual section { padding-top: 76px; scroll-margin-top: 50px; }
-.manual h2 { display: flex; align-items: baseline; gap: 14px; margin: 0 0 18px; font-size: 26px; font-weight: 400; line-height: 1.25; letter-spacing: -.02em; }
-.manual h2 { align-items: center; }
+.manual section { padding-top: 76px; scroll-margin-top: -44px; }
+.manual h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; font-size: 26px; font-weight: 400; line-height: 1.25; letter-spacing: -.02em; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 .glyph { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.toc .glyph { width: 14px; height: 14px; }
+.toc .glyph { width: 15px; height: 15px; }
 
-/* The tiles of acoci.dev: quiet at rest, their own colour when you point at them. */
-.tile { position: relative; flex: none; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 10px;
-        background: var(--card); color: var(--muted); transition: color .2s, border-color .2s, box-shadow .2s, transform .2s; }
-.tile::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: var(--tile); opacity: 0; transition: opacity .2s;
-                box-shadow: inset 0 0 0 1px #0000000f, inset 0 1px #ffffff59; }
-.tile .glyph { position: relative; width: 17px; height: 17px; }
-.tile:hover, .tile:focus-visible, .manual section:target .tile { color: var(--glyph); border-color: transparent; transform: translateY(-2px); box-shadow: 0 3px 6px -3px #00000059; }
-.tile:hover::before, .tile:focus-visible::before, .manual section:target .tile::before { opacity: 1; }
-.tile:hover .glyph { stroke-width: 2; }
+/* Each heading starts with its icon from the contents, in plain line work; yellow when you land on that section. */
+.mark { flex: none; display: grid; place-items: center; color: var(--faint); transition: color .2s; }
+.mark .glyph { width: 20px; height: 20px; }
+.mark:hover, .manual section:target .mark { color: var(--highlight); }
 .manual h3 { margin: 30px 0 8px; font-size: 15px; font-weight: 600; }
 .manual p { margin: 0 0 14px; color: var(--text); }
 .manual p strong { color: var(--ink); font-weight: 600; }
 .manual p a { color: var(--ink); text-decoration: underline 1.5px var(--highlight); text-underline-offset: 3px; }
-.manual code { padding: 1px 6px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink);
+.manual code { padding: 1px 5px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink);
                font: 13px/1.5 var(--font-mono); letter-spacing: 0; overflow-wrap: anywhere; }
 
 /* Two columns that become one on a phone: a key and what it does, a command and what it is for. */
-.rows { margin: 0 0 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); overflow: hidden; }
+.rows { margin: 0 0 22px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); overflow: hidden; }
 .rows > div { display: grid; grid-template-columns: 190px 1fr; gap: 16px; align-items: baseline; padding: 10px 16px; transition: background .2s; }
 .rows > div + div { border-top: 1px solid var(--line); }
 .rows > div:hover { background: var(--card-hover); }
@@ -151,32 +188,27 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
 .opts code { justify-self: start; padding: 0; background: none; }
 .opts > div > span { color: var(--muted); font-size: 14px; }
 
-.term { margin: 0 0 18px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink);
+.term { position: relative; margin: 0 0 18px; padding: 14px 52px 14px 18px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink);
         font: 13px/1.75 var(--font-mono); letter-spacing: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .term .p { color: var(--faint); user-select: none; }
 .term .o { color: var(--muted); }
+/* The copy button in the corner of each block of commands: it copies the commands, not the prompts or the output. */
+.term-copy { position: absolute; top: 9px; right: 9px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0;
+             border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--faint); cursor: pointer; transition: color .2s, border-color .2s; }
+.term-copy:hover, .term-copy:focus-visible { color: var(--ink); border-color: var(--pill-line); }
+.term-copy svg { grid-area: 1 / 1; width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: opacity .2s; }
+.term-copy .i-done, .term-copy.done .i-copy { opacity: 0; }
+.term-copy.done .i-done { opacity: 1; }
+.term-copy.done { color: var(--highlight); }
 
-.themes { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.themes li { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px 0 5px; border: 1px solid var(--line); border-radius: 999px;
-             background: var(--card); color: var(--text); font: 13px/1 var(--font-mono); letter-spacing: 0; }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px 16px; margin: 0; padding: 0; list-style: none; }
+.themes li { display: flex; align-items: center; gap: 10px; color: var(--text); font: 13px/1 var(--font-mono); letter-spacing: 0; }
 /* A tiny piece of the app: the theme's background and border, with three city dots in its first three colours. */
 .themes li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%;
                      box-shadow: inset 0 0 0 1.5px var(--ring), 0 0 0 1px var(--pill-line);
                      background: radial-gradient(circle at 6.5px 50%, var(--c1) 2.4px, transparent 3px),
                                  radial-gradient(circle at 12px 50%, var(--c2) 2.4px, transparent 3px),
                                  radial-gradient(circle at 17.5px 50%, var(--c3) 2.4px, transparent 3px), var(--bg-t); }
-
-/* Everything arrives one after the other, a touch late and from just below. */
-@keyframes row-in { from { opacity: 0; transform: translateY(4px); } }
-@media (prefers-reduced-motion: no-preference) {
-  main > *, .shot, .manual, .footer { animation: .5s ease-out backwards row-in; animation-delay: calc(var(--k, 0) * 80ms); }
-  main > :nth-child(2) { --k: 1; }
-  main > :nth-child(3) { --k: 2; }
-  main > :nth-child(4) { --k: 3; }
-  main > :nth-child(5) { --k: 4; }
-  .shot, .manual { --k: 6; }
-  .footer { --k: 8; }
-}
 
 /* Switching light and dark: the new page grows out of the button as a circle. */
 :root.theme-switching::view-transition-old(root) { animation: none; }
@@ -191,12 +223,16 @@ kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; 
   .headline { font-size: 28px; }
   .install { font-size: 13px; }
   .shot { margin-top: 48px; }
-  .window { border-radius: 12px; }
+  .feature { margin-top: 80px; }
+  .feature h2 { font-size: 24px; }
+  .feature p { margin-bottom: 24px; }
+  .also { margin-top: 80px; }
+  .also h2 { font-size: 24px; }
+  .also dl > div { grid-template-columns: 1fr; gap: 2px; }
   .window-bar { height: 28px; }
-  .window-bar i { width: 8px; height: 8px; }
   .footer { padding-top: 64px; }
-  .made { font-size: 17px; }
   .rows > div, .rows.wide > div { grid-template-columns: 1fr; gap: 4px; }
   .manual section { padding-top: 60px; }
   .manual h2 { font-size: 22px; }
+  .toc ol { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; }
 }
